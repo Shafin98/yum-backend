@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block title %} Projects {% endblock %}
+
+{% block content %}
+    <section class="customer-list-section">
+        <div class="container">
+            <div class="content">
+
+                <div class="title-box">
+                    <div class="page-title">
+                        <h3>Edit Project</h3>
+                    </div>
+                    <div class="breadcrumbs">
+                        <ul class="breadcrumbs-list">
+                            <li><a href="{% url 'dashboard' %}"><span><img src="/static/images/icons/Home.svg" alt="more"></span>Dashboard</a></li>
+                            <li><a href="{% url 'project' %}">Project List</a></li>
+                            <li><a href="{% url 'add_new_project' %}">Add New Project</a></li>
+                        </ul>
+                    </div>
+                    
+                </div>
+
+                <div class="form-area-content">
+                    <div class="form-inner-content">
+                        
+                        <form method="post" enctype="multipart/form-data" class="form-horizontal">
+
+                            <!-- Messages -->
+                            {% if messages %}
+                                <div class="alert alert-info" role="alert" style="color:red">
+                                    {% for message in messages %}
+                                        <p>{{ message }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            {% csrf_token %}
+
+                            <!-- Title -->
+                            <div class="form-group">
+                                <div class="input-field">
+                                    <label for="title">Title*</label>
+                                    <input type="text" name="title" id="title" value="{{ project.title }}" required>
+                                </div>
+                            </div>
+
+                            <!-- Category -->
+                            <div class="form-group">
+                                <div class="input-field">
+                                    <label for="type">Category*</label>
+                                    <select name="type" id="type" class="select2-single">
+                                        <option value="">Select Category</option>
+                                        {% for category in categories %}
+                                            <option value="{{ category.id }}"
+                                                {% if project.type.id == category.id %}selected{% endif %}>
+                                                {{ category.name }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Current Image -->
+                            <div class="form-group">
+                                <div class="input-field">
+                                    <label>Current Image</label><br>
+                                    {% if project.project_image %}
+                                        <img src="{{ project.project_image.url }}" 
+                                            alt="{{ project.title }}" 
+                                            width="150" 
+                                            style="border-radius:8px;">
+                                    {% else %}
+                                        <p>No image uploaded</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Change Image -->
+                            <div class="form-group">
+                                <div class="input-field">
+                                    <label for="project_image">Change Image</label>
+                                    <input type="file" name="project_image" id="project_image" accept="image/*">
+                                </div>
+                            </div>
+
+                            <!-- Website -->
+                            <div class="form-group">
+                                <div class="input-field">
+                                    <label for="website">Website</label>
+                                    <input type="url" name="website" id="website" value="{{ project.website }}">
+                                </div>
+                            </div>
+
+                            <!-- Project Summary -->
+                            <div class="form-group">
+                                <div class="input-field">
+                                    <label for="project_summary">Project Summary*</label>
+                                    <textarea name="project_summary" id="project_summary" rows="5" required>{{ project.project_summary }}</textarea>
+                                </div>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="form-group">
+                                <div class="input-field">
+                                    <label for="description">Description*</label>
+                                    <textarea name="description" id="description" rows="5" required>{{ project.description }}</textarea>
+                                </div>
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="form-group">
+                                <div class="form-button">
+                                    <input type="submit" class="button blue-button" value="Update">
+                                    <a href="{% url 'project' %}" class="button primary-button cancle-button">Cancel</a>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    $('.select2-single').select2();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %} Accounts {% endblock %}
+
+{% block content %}
+<section class="customer-list-section">
+    <div class="container">
+        <div class="content">
+
+            <div class="title-box">
+                <div class="page-title">
+                    <h3>Add New Account</h3>
+                </div>
+                <div class="breadcrumbs">
+                    <ul class="breadcrumbs-list">
+                        <li><a href="{% url 'dashboard' %}"><span><img src="/static/images/icons/Home.svg"></span>Dashboard</a></li>
+                        <li><a href="{% url 'accounts' %}">Accounts List</a></li>
+                        <li><a href="{% url 'add_new_accounts' %}">Add New Account</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="form-area-content">
+                <div class="form-inner-content">
+
+                    <form method="post" class="form-horizontal">
+                        {% csrf_token %}
+
+                        <div class="form-group">
+                            <div class="input-field">
+                                <label>Platform*</label>
+                                <select name="platform" class="select2-single" required>
+                                    <option value="">Select Platform</option>
+                                    <option value="facebook">Facebook</option>
+                                    <option value="instagram">Instagram</option>
+                                    <option value="twitter">Twitter / X</option>
+                                    <option value="linkedin">LinkedIn</option>
+                                    <option value="github">GitHub</option>
+                                    <option value="youtube">YouTube</option>
+                                    <option value="tiktok">TikTok</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-field">
+                                <label>URL*</label>
+                                <input type="url" name="url" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-field">
+                                <label>Icon</label>
+                                <input type="text" name="icon" placeholder="e.g. fa-facebook">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-field">
+                                <label>Order</label>
+                                <input type="number" name="order" value="0">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-field">
+                                <label>
+                                    <input type="checkbox" name="is_active" checked> Active
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="form-button">
+                                <input type="submit" class="button blue-button" value="Save">
+                                <a href="{% url 'accounts' %}" class="button primary-button cancle-button">Cancel</a>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

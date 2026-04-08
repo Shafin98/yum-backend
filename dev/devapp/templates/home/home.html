@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Home | Dashboard{% endblock %}
+
+{% block content %}
+ <!-- Displaying messages (if any) -->
+    {% if messages %}
+        <div class="alert alert-info" role="alert" style="color:red">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <h2>Welcome to the Dashboard!</h2>
+    
+{% endblock %}

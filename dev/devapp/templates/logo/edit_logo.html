@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %} Logos {% endblock %}
+
+{% block content %}
+    <section class="customer-list-section">
+        <div class="container">
+            <div class="content">
+
+                <div class="title-box">
+                    <div class="page-title">
+                        <h3>Edit logo</h3>
+                    </div>
+                    <div class="breadcrumbs">
+                        <ul class="breadcrumbs-list">
+                            <li><a href="{% url 'dashboard' %}"><span><img src="/static/images/icons/Home.svg" alt="more"></span>Dashboard</a></li>
+                            <li><a href="{% url 'logo' %}">Logo List</a></li>
+                            <li><a href="{% url 'add_new_logo' %}">Add New Logo</a></li>
+                        </ul>
+                    </div>
+                    
+                </div>
+
+                <div class="form-area-content">
+                    <div class="form-inner-content">
+                        
+                        <form method="post" enctype="multipart/form-data" class="form-horizontal" >
+                             <!-- Displaying messages (if any) -->
+                                {% if messages %}
+                                    <div class="alert alert-info" role="alert" style="color:red">
+                                        {% for message in messages %}
+                                            <p>{{ message }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <div class="input-field">
+                                    <label for="name"> Name*</label>
+                                    <input type="text" name="name" id="name" value="{{logo.name}}" required>
+                                </div>            
+                            </div>
+ 
+                            <div class="form-group">
+                                <div class="input-field">
+                                    <label>Current Logo</label><br>
+                                    {% if logo.logo %}
+                                        <img src="{{ logo.logo.url }}" alt="{{ logo.name }}" width="120" style="border-radius:8px;">
+                                    {% else %}
+                                        <p>No image uploaded</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="input-field">
+                                    <label for="logo">Change Logo</label>
+                                    <input type="file" name="logo" id="logo">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="input-field">
+                                    <label for="is_active">Active</label>
+                                    <input type="checkbox" name="is_active" id="is_active"
+                                        {% if logo.is_active %}checked{% endif %}>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="form-button">
+                                    <input type="submit" class="button blue-button" value="Update">
+                                    <a href="{% url 'logo' %}" class="button primary-button cancle-button">Cancel</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    $('.select2-single').select2();
+});
+</script>
+{% endblock %}

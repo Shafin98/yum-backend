@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Service | Details{% endblock %}
+
+{% block content %}
+    <section class="customer-list-section">
+        <div class="container">
+            <div class="content">
+
+                <div class="title-box">
+                            <div class="page-title">
+                                <h3>Services List</h3>
+                            </div>
+                            <div class="breadcrumbs">
+                                <ul class="breadcrumbs-list">
+                                    <li><a href="{% url 'dashboard' %}"><span><img src="/static/images/icons/Home.svg" alt="more"></span>Dashboard</a></li>
+                                    <li><a href="{% url 'service' %}">Services List</a></li>
+                                </ul>
+                            </div>
+                            <div class="top-button">
+                                <div class="button-box">
+                                    <a class="button primary-button" href="{% url 'add_new_service' %}"><span><img src="/static/images/icons/add.svg" alt="more"></span> Add New Service</a>
+                                </div>
+                            </div>
+                </div>
+
+
+                <div class="main_content">
+                    <div class="view_box mt-3" style="margin-bottom:15px;">
+                        <div class="col-sm-12">
+                            <div class="view_title">
+                                <div class="purchase-request">
+                                    <div class="prInformation">
+                                        <h3>{{service.name}}'s Basic Information</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="purchase-request">
+
+                                <div class="prInformation">
+                                <p>Service Name: {{service.name}}</p>
+                                <p>Service Description: {{service.description}}</p>
+
+                                <p>Service Creation Date: {{service.created_at|date:"F d, Y"|default:"Not set"}}</p>
+
+                                </div>
+                            </div>
+
+                            <!-- Edit and Delete buttons -->
+                            <div class="prInformation" style="margin-top: 20px; border-top: 1px solid #e0e0e0; padding-top: 20px;">
+                                <a class="button primary-button" href="{% url 'edit_service' service.slug %}">Edit</a>
+                                <form method="POST" action="{% url 'delete_service' service.slug %}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this service? This action cannot be undone.');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="button" style="background-color: #dc3545;">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+           </div>
+
+        </div>
+    </section>
+
+{% endblock %}

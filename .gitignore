@@ -1,0 +1,22 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# SQLite database
+db.sqlite3
+dev/db.sqlite3
+backend/dev/db.sqlite3
+
+# Virtual environment
+venv/
+
+# ------------------------ test version from chatgpt ------------------------
+# Python cache
+# __pycache__/
+# *.pyc
+
+# SQLite database
+# *.sqlite3
+
+# Virtual environment
+# venv/

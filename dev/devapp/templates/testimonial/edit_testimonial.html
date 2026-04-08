@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+
+{% block title %} Testimonials {% endblock %}
+
+{% block content %}
+    <section class="customer-list-section">
+        <div class="container">
+            <div class="content">
+
+                <div class="title-box">
+                    <div class="page-title">
+                        <h3>Edit Testimonial</h3>
+                    </div>
+                    <div class="breadcrumbs">
+                        <ul class="breadcrumbs-list">
+                            <li><a href="{% url 'dashboard' %}"><span><img src="/static/images/icons/Home.svg" alt="more"></span>Dashboard</a></li>
+                            <li><a href="{% url 'testimonial' %}">Testimonial List</a></li>
+                            <li><a href="{% url 'add_new_testimonial' %}">Add New Testimonial</a></li>
+                        </ul>
+                    </div> 
+                </div>
+
+                <div class="form-area-content">
+                    <div class="form-inner-content">
+
+                        <form method="post" enctype="multipart/form-data" class="form-horizontal">
+                            
+                            {% if messages %}
+                                <div class="alert alert-info" style="color:red">
+                                    {% for message in messages %}
+                                        <p>{{ message }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            {% csrf_token %}
+
+                            <!-- Client Name -->
+                            <div class="form-group">
+                                <div class="input-field">
+                                    <label>Client Name*</label>
+                                    <input type="text" name="client_name" value="{{ testimonial.client_name }}" required>
+                                </div>
+                            </div>
+
+                            <!-- Client Title -->
+                            <div class="form-group">
+                                <div class="input-field">
+                                    <label>Client Title</label>
+                                    <input type="text" name="client_title" value="{{ testimonial.client_title }}">
+                                </div>
+                            </div>
+
+                            <!-- Company Name -->
+                            <div class="form-group">
+                                <div class="input-field">
+                                    <label>Company Name</label>
+                                    <input type="text" name="company_name" value="{{ testimonial.company_name }}">
+                                </div>
+                            </div>
+
+                            <!-- Company Logo -->
+                            <div class="form-group">
+                                <div class="input-field">
+                                    <label>Company Logo</label>
+                                    <select name="company_logo" class="select2-single">
+                                        <option value="">Select Logo</option>
+                                        {% for logo in logos %}
+                                            <option value="{{ logo.id }}"
+                                                {% if testimonial.company_logo and testimonial.company_logo.id == logo.id %}
+                                                    selected
+                                                {% endif %}
+                                            >
+                                                {{ logo.name }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Current Image -->
+                            <div class="form-group">
+                                <div class="input-field">
+                                    <label>Current Client Image</label><br>
+                                    {% if testimonial.client_image %}
+                                        <img src="{{ testimonial.client_image.url }}" width="120" style="border-radius:8px;">
+                                    {% else %}
+                                        <p>No image uploaded</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Change Image -->
+                            <div class="form-group">
+                                <div class="input-field">
+                                    <label>Change Client Image</label>
+                                    <input type="file" name="client_image">
+                                </div>
+                            </div>
+
+                            <!-- Rating -->
+                            <div class="form-group">
+                                <div class="input-field">
+                                    <label>Rating</label>
+                                    <input type="number" name="rating" min="1" max="5" value="{{ testimonial.rating }}">
+                                </div>
+                            </div>
+
+                            <!-- Testimonial -->
+                            <div class="form-group">
+                                <div class="input-field-full">
+                                    <label>Testimonial</label>
+                                    <textarea name="testimonial" rows="4">{{ testimonial.testimonial }}</textarea>
+                                </div>
+                            </div>
+
+                            <!-- Order -->
+                            <div class="form-group">
+                                <div class="input-field">
+                                    <label>Order</label>
+                                    <input type="number" name="order" value="{{ testimonial.order }}">
+                                </div>
+                            </div>
+
+                            <!-- Active -->
+                            <div class="form-group">
+                                <div class="input-field">
+                                    <label>
+                                        <input type="checkbox" name="is_active"
+                                            {% if testimonial.is_active %}checked{% endif %}>
+                                        Active
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="form-group">
+                                <div class="form-button">
+                                    <input type="submit" class="button blue-button" value="Update">
+                                    <a href="{% url 'testimonial' %}" class="button primary-button">Cancel</a>
+                                </div>
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    $('.select2-single').select2();
+});
+</script>
+{% endblock %}

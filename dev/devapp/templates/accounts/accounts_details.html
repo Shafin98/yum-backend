@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %} Account Details {% endblock %}
+
+{% block content %}
+    <section class="customer-list-section">
+        <div class="container">
+            <div class="content">
+                
+                <div class="title-box">
+                            <div class="page-title">
+                                <h3>Account Details</h3>
+                            </div>
+                            <div class="breadcrumbs">
+                                <ul class="breadcrumbs-list">
+                                    <li><a href="{% url 'dashboard' %}"><span><img src="/static/images/icons/Home.svg" alt="more"></span>Dashboard</a></li>
+                                    <li><a href="{% url 'accounts' %}">Accounts List</a></li>
+                                </ul>
+                            </div>
+                            <div class="top-button">
+                                <div class="button-box">
+                                    <a class="button primary-button" href="{% url 'add_new_accounts' %}"><span><img src="/static/images/icons/add.svg" alt="more"></span> Add New Account</a>
+                                </div>
+                            </div>
+                </div>
+                
+
+                <div class="main_content">
+                    <div class="view_box mt-3" style="margin-bottom:15px;">
+                        <div class="col-sm-12">
+                            <div class="view_title">
+                                <div class="purchase-request">
+                                    <div class="prInformation">
+                                        <h3>{{account.get_platform_display}}'s Details</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="purchase-request">
+                                
+                                <div class="prInformation">
+                                <p><strong>URL:</strong> {{ account.url }}</p>
+                                <p><strong>Icon:</strong> {{ account.icon }}</p>
+                                <p><strong>Order:</strong> {{ account.order }}</p>
+                                <p><strong>Status:</strong> 
+                                    {% if account.is_active %} Active {% else %} Inactive {% endif %}
+                                </p>
+                                <p>Logo Creation Date: {{logo.created_at|date:"F d, Y"|default:"Not set"}}</p>
+                                
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+           </div>
+
+        </div>
+    </section>
+    
+{% endblock %}

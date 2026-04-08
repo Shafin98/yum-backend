@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %} Edit Account {% endblock %}
+
+{% block content %}
+    <section class="customer-list-section">
+        <div class="container">
+            <div class="content">
+
+                <div class="title-box">
+                    <div class="page-title">
+                        <h3>Edit Accounts</h3>
+                    </div>
+                    <div class="breadcrumbs">
+                        <ul class="breadcrumbs-list">
+                            <li><a href="{% url 'dashboard' %}"><span><img src="/static/images/icons/Home.svg" alt="more"></span>Dashboard</a></li>
+                            <li><a href="{% url 'accounts' %}">Accounts List</a></li>
+                            <li><a href="{% url 'add_new_accounts' %}">Add New Account</a></li>
+                        </ul>
+                    </div>
+                    
+                </div>
+
+                <div class="form-area-content">
+                    <div class="form-inner-content">
+                        
+                        <form method="post" enctype="multipart/form-data" class="form-horizontal" >
+                             <!-- Displaying messages (if any) -->
+                                {% if messages %}
+                                    <div class="alert alert-info" role="alert" style="color:red">
+                                        {% for message in messages %}
+                                            <p>{{ message }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <div class="input-field">
+                                    <label>Platform</label>
+                                    <input type="text" value="{{ account.get_platform_display }}" disabled>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="input-field">
+                                    <label>URL</label>
+                                    <input type="url" name="url" value="{{ account.url }}">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="input-field">
+                                    <label>Icon</label>
+                                    <input type="text" name="icon" value="{{ account.icon }}">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="input-field">
+                                    <label>Order</label>
+                                    <input type="number" name="order" value="{{ account.order }}">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="input-field">
+                                    <label>
+                                        <input type="checkbox" name="is_active"
+                                            {% if account.is_active %}checked{% endif %}>
+                                        Active
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="form-button">
+                                    <input type="submit" class="button blue-button" value="Update">
+                                    <a href="{% url 'accounts' %}" class="button primary-button cancle-button">Cancel</a>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    $('.select2-single').select2();
+});
+</script>
+{% endblock %}
