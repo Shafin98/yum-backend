@@ -27,7 +27,15 @@ SECRET_KEY = 'django-insecure-)02%yecvwdi!%rxch_3--vhtx7388o3=@nebzu3vv$%+djfexx
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    'yum-backend-1rf7.onrender.com',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://yum-backend-1rf7.onrender.com'
+]
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 # Application definition
