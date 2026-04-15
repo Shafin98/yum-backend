@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %} Add Value {% endblock %}
+
+{% block content %}
+<section class="customer-list-section">
+    <div class="container">
+        <div class="content">
+
+            <div class="title-box">
+                <div class="page-title">
+                    <h3>Add New Value</h3>
+                </div>
+                <div class="breadcrumbs">
+                    <ul class="breadcrumbs-list">
+                        <li><a href="{% url 'dashboard' %}">
+                            <span><img src="/static/images/icons/Home.svg"></span>Dashboard</a></li>
+                        <li><a href="{% url 'value_list' %}">Value List</a></li>
+                        <li><a href="{% url 'add_value' %}">Add Value</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="form-area-content">
+                <div class="form-inner-content">
+
+                    <form method="post" class="form-horizontal">
+                        {% csrf_token %}
+
+                        <!-- Title -->
+                        <div class="form-group">
+                            <div class="input-field">
+                                <label>Title*</label>
+                                <input type="text" name="title" required>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="form-group">
+                            <div class="input-field">
+                                <label>Description*</label>
+                                <textarea name="description" rows="5" required></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Icon -->
+                        <div class="form-group">
+                            <div class="input-field">
+                                <label>Icon (optional)</label>
+                                <input type="text" name="icon" placeholder="e.g. fa fa-user">
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="form-group">
+                            <div class="form-button">
+                                <input type="submit" class="button blue-button" value="Save">
+                                <a href="{% url 'value_list' %}" class="button primary-button cancle-button">Cancel</a>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+{% endblock %}

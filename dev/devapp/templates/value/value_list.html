@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %} Value List {% endblock %}
+
+{% block content %}
+<section class="customer-list-section">
+    <div class="container">
+        <div class="content">
+
+            <div class="title-box">
+                <div class="page-title">
+                    <h3>Value List</h3>
+                </div>
+                <div class="breadcrumbs">
+                    <ul class="breadcrumbs-list">
+                        <li><a href="{% url 'dashboard' %}">
+                            <span><img src="/static/images/icons/Home.svg"></span>Dashboard</a></li>
+                        <li>Value List</li>
+                    </ul>
+                </div>
+
+                <div class="top-button">
+                    <div class="button-box">
+                        <a class="button primary-button" href="{% url 'add_value' %}">
+                            <span><img src="/static/images/icons/add.svg"></span>
+                            Add Value
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="listing-box">
+
+                <!-- Messages -->
+                {% if messages %}
+                <div class="alert alert-info" style="color:red">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="table table-border-bottom">
+                    <table>
+                        <tr>
+                            <th>#</th>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Icon</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+
+                        {% for value in values %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ value.title }}</td>
+                            <td>{{ value.description|truncatewords:10 }}</td>
+                            <td>{{ value.icon }}</td>
+
+                            <td class="text-center">
+                                <a href="{% url 'edit_value' value.id %}">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'delete_value' value.id %}" 
+                                   onclick="return confirm('Are you sure?')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center">No Data found.</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

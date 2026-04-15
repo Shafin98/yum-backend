@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %} Edit Value {% endblock %}
+
+{% block content %}
+<section class="customer-list-section">
+    <div class="container">
+        <div class="content">
+
+            <div class="title-box">
+                <div class="page-title">
+                    <h3>Edit Value</h3>
+                </div>
+                <div class="breadcrumbs">
+                    <ul class="breadcrumbs-list">
+                        <li><a href="{% url 'dashboard' %}">
+                            <span><img src="/static/images/icons/Home.svg"></span>Dashboard</a></li>
+                        <li><a href="{% url 'value_list' %}">Value List</a></li>
+                        <li>Edit Value</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="form-area-content">
+                <div class="form-inner-content">
+
+                    <form method="post" class="form-horizontal">
+
+                        {% csrf_token %}
+
+                        <!-- Messages -->
+                        {% if messages %}
+                        <div class="alert alert-info" style="color:red">
+                            {% for message in messages %}
+                                <p>{{ message }}</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <!-- Title -->
+                        <div class="form-group">
+                            <div class="input-field">
+                                <label>Title*</label>
+                                <input type="text" name="title" value="{{ value.title }}" required>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="form-group">
+                            <div class="input-field">
+                                <label>Description*</label>
+                                <textarea name="description" rows="5" required>{{ value.description }}</textarea>
+                            </div>
+                        </div>
+
+                        <!-- Icon -->
+                        <div class="form-group">
+                            <div class="input-field">
+                                <label>Icon</label>
+                                <input type="text" name="icon" value="{{ value.icon }}">
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="form-group">
+                            <div class="form-button">
+                                <input type="submit" class="button blue-button" value="Update">
+                                <a href="{% url 'value_list' %}" class="button primary-button cancle-button">Cancel</a>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+{% endblock %}
