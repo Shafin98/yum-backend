@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %} Team List {% endblock %}
+
+{% block content %}
+<section class="customer-list-section">
+    <div class="container">
+        <div class="content">
+
+            <div class="title-box">
+                <div class="page-title">
+                    <h3>Team Members</h3>
+                </div>
+                <div class="breadcrumbs">
+                    <ul class="breadcrumbs-list">
+                        <li><a href="{% url 'dashboard' %}">
+                            <span><img src="/static/images/icons/Home.svg"></span>Dashboard</a></li>
+                        <li>Team List</li>
+                    </ul>
+                </div>
+
+                <div class="top-button">
+                    <div class="button-box">
+                        <a class="button primary-button" href="{% url 'add_team_member' %}">
+                            <span><img src="/static/images/icons/add.svg"></span>
+                            Add Member
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="listing-box">
+
+                <!-- Messages -->
+                {% if messages %}
+                <div class="alert alert-info" style="color:red">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="table table-border-bottom">
+                    <table>
+                        <tr>
+                            <th>#</th>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Designation</th>
+                            <th>Order</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+
+                        {% for member in members %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+
+                            <td>
+                                {% if member.image %}
+                                    <img src="{{ member.image.url }}" width="50" style="border-radius:6px;">
+                                {% else %}
+                                    No Image
+                                {% endif %}
+                            </td>
+
+                            <td>{{ member.name }}</td>
+                            <td>{{ member.designation }}</td>
+                            <td>{{ member.order }}</td>
+
+                            <td class="text-center">
+                                <a href="{% url 'edit_team_member' member.id %}">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'delete_team_member' member.id %}"
+                                   onclick="return confirm('Are you sure?')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center">No Data found.</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
