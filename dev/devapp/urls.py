@@ -57,6 +57,9 @@ urlpatterns = [
     path('team/edit/<int:pk>/', views.edit_team_member, name='edit_team_member'),
     path('team/delete/<int:pk>/', views.delete_team_member, name='delete_team_member'),
 
+    #About Us
+    path('about/edit/<int:pk>/', views.edit_about_us, name='edit_about_us'),
+
     # API endpoints
     path('api/v1/contact/', ContactCreateAPI.as_view()),
     # admin API (Private)

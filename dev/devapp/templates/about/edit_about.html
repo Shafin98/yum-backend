@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block title %} About Us {% endblock %}
+
+{% block content %}
+<section class="customer-list-section">
+    <div class="container">
+        <div class="content">
+
+            <div class="title-box">
+                <div class="page-title">
+                    <h3>Edit About Us</h3>
+                </div>
+                <div class="breadcrumbs">
+                    <ul class="breadcrumbs-list">
+                        <li>
+                            <a href="{% url 'dashboard' %}">
+                                <span><img src="/static/images/icons/Home.svg"></span>Dashboard
+                            </a>
+                        </li>
+                        <li>About Us</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="form-area-content">
+                <div class="form-inner-content">
+
+                    <form method="post" class="form-horizontal">
+                        {% csrf_token %}
+
+                        <!-- Messages -->
+                        {% if messages %}
+                        <div class="alert alert-info" style="color:red">
+                            {% for message in messages %}
+                                <p>{{ message }}</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <!-- Heading -->
+                        <div class="form-group">
+                            <div class="input-field">
+                                <label>Heading*</label>
+                                <input type="text" name="heading" value="{{ about.heading }}" required>
+                            </div>
+                        </div>
+
+                        <!-- Subheading -->
+                        <div class="form-group">
+                            <div class="input-field">
+                                <label>Subheading*</label>
+                                <textarea name="subheading" rows="3" required>{{ about.subheading }}</textarea>
+                            </div>
+                        </div>
+
+                        <!-- Story Title -->
+                        <div class="form-group">
+                            <div class="input-field">
+                                <label>Story Title*</label>
+                                <input type="text" name="story_title" value="{{ about.story_title }}" required>
+                            </div>
+                        </div>
+
+                        <!-- Story Description -->
+                        <div class="form-group">
+                            <div class="input-field">
+                                <label>Story Description*</label>
+                                <textarea name="story_description" rows="5" required>{{ about.story_description }}</textarea>
+                            </div>
+                        </div>
+
+                        <!-- Counters Section -->
+                        <div class="form-group">
+                            <div class="input-field">
+                                <label>Projects Completed</label>
+                                <input type="number" name="projects_completed" value="{{ about.projects_completed }}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-field">
+                                <label>Happy Clients</label>
+                                <input type="number" name="happy_clients" value="{{ about.happy_clients }}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-field">
+                                <label>Years of Experience</label>
+                                <input type="number" name="years_experience" value="{{ about.years_experience }}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-field">
+                                <label>Team Members Count</label>
+                                <input type="number" name="team_members_count" value="{{ about.team_members_count }}">
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="form-group">
+                            <div class="form-button">
+                                <input type="submit" class="button blue-button" value="Update">
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+{% endblock %}
