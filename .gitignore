@@ -20,4 +20,4 @@ venv/
 
 # Virtual environment
 # venv/
-# .env
+# dev/.env
