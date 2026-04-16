@@ -10,6 +10,9 @@ backend/dev/db.sqlite3
 # Virtual environment
 venv/
 
+# Environment variables
+.env
+
 # ------------------------ test version from chatgpt ------------------------
 # Python cache
 # __pycache__/
@@ -20,4 +23,3 @@ venv/
 
 # Virtual environment
 # venv/
-# dev/.env
