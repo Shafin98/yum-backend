@@ -110,8 +110,9 @@ WSGI_APPLICATION = 'dev.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',  # fallback for local dev
-        conn_max_age=600
+        default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
+        conn_max_age=600,
+        ssl_require='DATABASE_URL' in os.environ  # only SSL if using Postgres
     )
 }
 
