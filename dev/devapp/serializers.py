@@ -72,6 +72,7 @@ class TestimonialSerializer(serializers.ModelSerializer):
         model = Testimonial
         fields = [
             "client_name",
+            "slug",
             "client_title",
             "company_name",
             "company_logo",
@@ -87,6 +88,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         model = Project
         fields = [
             "title",
+            "slug",
             "type",
             "project_image",
             "website",
