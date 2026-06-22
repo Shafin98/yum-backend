@@ -1,14 +1,19 @@
 from rest_framework import serializers
-from .models import * # import all models
+from .models import *
 
+
+# ==============================================================================
+# CONTACT / INBOX
+# ==============================================================================
 
 class ContactSerializer(serializers.ModelSerializer):
     service = serializers.SlugRelatedField(
-        queryset=Category.objects.filter(is_active=True),
+        queryset=Service.objects.filter(is_active=True),
         slug_field="slug",
         required=False,
         allow_null=True
     )
+
     class Meta:
         model = PostMessage
         fields = [
@@ -16,14 +21,12 @@ class ContactSerializer(serializers.ModelSerializer):
             "email",
             "company",
             "service",
-            "message"
+            "message",
         ]
 
+
 class MessageReadSerializer(serializers.ModelSerializer):
-    service_name = serializers.CharField(
-        source="service.name",
-        read_only=True
-    )
+    service_name = serializers.CharField(source="service.name", read_only=True)
 
     class Meta:
         model = PostMessage
@@ -39,16 +42,27 @@ class MessageReadSerializer(serializers.ModelSerializer):
             "service_name",
         ]
 
+
+# ==============================================================================
+# LOGOS
+# ==============================================================================
+
 class ClientLogoSerializer(serializers.ModelSerializer):
     logo = serializers.ImageField(read_only=True)
 
     class Meta:
         model = Logo
         fields = [
-            "name", 
-            "slug", 
+            "name",
+            "slug",
             "logo",
+            "order_no",
         ]
+
+
+# ==============================================================================
+# SOCIAL MEDIA
+# ==============================================================================
 
 class SocialMediaAccountSerializer(serializers.ModelSerializer):
     class Meta:
@@ -57,53 +71,187 @@ class SocialMediaAccountSerializer(serializers.ModelSerializer):
             "platform",
             "url",
             "icon",
+            "username",
+            "order_no",
         ]
 
+
+# ==============================================================================
+# TESTIMONIALS
+# ==============================================================================
+
 class TestimonialSerializer(serializers.ModelSerializer):
-    
-    client_title = serializers.CharField(read_only=True)
-
-    company_logo = serializers.ImageField(
-        source="company_logo.logo",
-        read_only=True
-    )
-
     class Meta:
         model = Testimonial
         fields = [
             "client_name",
-            "slug",
             "client_title",
-            "company_name",
-            "company_logo",
             "client_image",
             "testimonial",
             "rating",
+            "order_no",
         ]
-        
-class ProjectSerializer(serializers.ModelSerializer):
-    type = serializers.CharField(source="type.name", read_only=True)
 
+
+# ==============================================================================
+# PROJECTS
+# ==============================================================================
+
+class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = [
             "title",
             "slug",
-            "type",
+            "type",           # now a plain CharField, no source remapping needed
             "project_image",
             "website",
             "project_summary",
             "description",
+            "created_at",
         ]
 
-class CategoryPublicSerializer(serializers.ModelSerializer):
+
+# ==============================================================================
+# SERVICES  (replaces CategoryPublicSerializer)
+# ==============================================================================
+
+class ServiceBadgeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Category
+        model = ServiceBadge
+        fields = ["badge"]
+
+
+class ServiceProcessSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ServiceProcess
+        fields = ["title", "description", "order_no"]
+
+
+class ServiceGallerySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ServiceGallery
+        fields = ["type", "src", "caption", "order_no"]
+
+
+class ServiceDeliverableSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ServiceDeliverable
+        fields = ["name", "order_no"]
+
+
+class ServiceToolSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ServiceTool
+        fields = ["name", "order_no"]
+
+
+class ServicePricingFeatureSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ServicePricingFeature
+        fields = ["feature", "order_no"]
+
+
+class ServicePricingTierSerializer(serializers.ModelSerializer):
+    features = ServicePricingFeatureSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = ServicePricingTier
+        fields = [
+            "name",
+            "tagline",
+            "price",
+            "delivery_days",
+            "revisions",
+            "highlight",
+            "order_no",
+            "features",
+        ]
+
+
+class ServiceReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ServiceReview
+        fields = [
+            "client_name",
+            "client_title",
+            "client_image",
+            "testimonial",
+            "rating",
+            "review_date",
+        ]
+
+
+class ServiceRelatedSerializer(serializers.ModelSerializer):
+    """Lightweight nested serializer — avoids infinite recursion."""
+    name = serializers.CharField(source="related_service.name", read_only=True)
+    slug = serializers.CharField(source="related_service.slug", read_only=True)
+    cover = serializers.ImageField(source="related_service.cover", read_only=True)
+
+    class Meta:
+        model = ServiceRelated
+        fields = ["name", "slug", "cover"]
+
+
+# Full detail serializer — used on the service detail endpoint
+class ServiceDetailSerializer(serializers.ModelSerializer):
+    badges = ServiceBadgeSerializer(many=True, read_only=True)
+    process_steps = ServiceProcessSerializer(many=True, read_only=True)
+    gallery = ServiceGallerySerializer(many=True, read_only=True)
+    deliverables = ServiceDeliverableSerializer(many=True, read_only=True)
+    tools = ServiceToolSerializer(many=True, read_only=True)
+    pricing_tiers = ServicePricingTierSerializer(many=True, read_only=True)
+    reviews = ServiceReviewSerializer(many=True, read_only=True)
+    related_services = ServiceRelatedSerializer(source="related_from", many=True, read_only=True)
+
+    class Meta:
+        model = Service
         fields = [
             "name",
             "slug",
             "description",
+            "cover",
+            "pitch",
+            "timeline",
+            "rating",
+            "review_count",
+            "price_from",
+            "delivery_days",
+            "created_at",
+            # nested
+            "badges",
+            "process_steps",
+            "gallery",
+            "deliverables",
+            "tools",
+            "pricing_tiers",
+            "reviews",
+            "related_services",
         ]
+
+
+# List serializer — lightweight, no nested children
+class ServiceListSerializer(serializers.ModelSerializer):
+    badges = ServiceBadgeSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Service
+        fields = [
+            "name",
+            "slug",
+            "description",
+            "cover",
+            "rating",
+            "review_count",
+            "price_from",
+            "delivery_days",
+            "badges",
+        ]
+
+
+# ==============================================================================
+# ABOUT US
+# ==============================================================================
 
 class AboutUsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -117,8 +265,14 @@ class AboutUsSerializer(serializers.ModelSerializer):
             "happy_clients",
             "years_experience",
             "team_members_count",
+            "mission",   # NEW
+            "vision",    # NEW
         ]
 
+
+# ==============================================================================
+# VALUES
+# ==============================================================================
 
 class ValueSerializer(serializers.ModelSerializer):
     class Meta:
@@ -127,8 +281,13 @@ class ValueSerializer(serializers.ModelSerializer):
             "title",
             "description",
             "icon",
+            "order_no",  # NEW
         ]
 
+
+# ==============================================================================
+# TEAM MEMBERS
+# ==============================================================================
 
 class TeamMemberSerializer(serializers.ModelSerializer):
     class Meta:
@@ -137,5 +296,5 @@ class TeamMemberSerializer(serializers.ModelSerializer):
             "name",
             "designation",
             "image",
-            "order",
+            "order_no",  # renamed from order
         ]
