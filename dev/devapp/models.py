@@ -11,7 +11,7 @@ class Service(models.Model):
     cover = models.ImageField(upload_to='services/covers/')       # NEW
     pitch = models.TextField()                                     # NEW
     timeline = models.CharField(max_length=100)                   # NEW
-    rating = models.DecimalField(max_digits=3, decimal_places=1)  # NEW
+    rating = models.DecimalField(max_digits=4, decimal_places=2)  # NEW
     review_count = models.PositiveIntegerField(default=0)         # NEW
     price_from = models.DecimalField(max_digits=10, decimal_places=2)  # NEW
     delivery_days = models.PositiveIntegerField()                  # NEW
@@ -169,6 +169,7 @@ class ServiceReview(models.Model):
     service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name='reviews')
     client_name = models.CharField(max_length=200)
     client_title = models.CharField(max_length=100)
+    client_company = models.CharField(max_length=200, blank=True, null=True)  # NEW
     client_image = models.URLField()
     testimonial = models.TextField()
     rating = models.PositiveSmallIntegerField(help_text="Rating out of 5 (1–5)")

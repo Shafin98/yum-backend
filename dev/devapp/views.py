@@ -42,6 +42,91 @@ class ServiceDetailAPI(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+# ==============================================================================
+# API — SERVICE SUB-RESOURCE ENDPOINTS
+# Each resolves the parent Service by slug, then returns only the requested
+# sub-resource — keeping the detail endpoint lightweight.
+# ==============================================================================
+
+class ServiceProcessAPI(APIView):
+    """GET /api/v1/portfolio/services/{slug}/process/"""
+    permission_classes = [AllowAny]
+
+    def get(self, request, slug):
+        service = get_object_or_404(Service, slug=slug, is_active=True)
+        steps = service.process_steps.all()
+        serializer = ServiceProcessSerializer(steps, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ServiceGalleryAPI(APIView):
+    """GET /api/v1/portfolio/services/{slug}/gallery/"""
+    permission_classes = [AllowAny]
+
+    def get(self, request, slug):
+        service = get_object_or_404(Service, slug=slug, is_active=True)
+        gallery = service.gallery.all()
+        serializer = ServiceGallerySerializer(gallery, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ServiceDeliverablesAPI(APIView):
+    """GET /api/v1/portfolio/services/{slug}/deliverables/
+    Returns a flat string array: ["Item 1", "Item 2"]
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request, slug):
+        service = get_object_or_404(Service, slug=slug, is_active=True)
+        serializer = ServiceDeliverableSerializer(service.deliverables.all(), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ServiceToolsAPI(APIView):
+    """GET /api/v1/portfolio/services/{slug}/tools/
+    Returns a flat string array: ["Figma", "Photoshop"]
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request, slug):
+        service = get_object_or_404(Service, slug=slug, is_active=True)
+        serializer = ServiceToolSerializer(service.tools.all(), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ServicePricingTiersAPI(APIView):
+    """GET /api/v1/portfolio/services/{slug}/pricingtiers/"""
+    permission_classes = [AllowAny]
+
+    def get(self, request, slug):
+        service = get_object_or_404(Service, slug=slug, is_active=True)
+        tiers = service.pricing_tiers.prefetch_related("features").all()
+        serializer = ServicePricingTierSerializer(tiers, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ServiceReviewsAPI(APIView):
+    """GET /api/v1/portfolio/services/{slug}/reviews/"""
+    permission_classes = [AllowAny]
+
+    def get(self, request, slug):
+        service = get_object_or_404(Service, slug=slug, is_active=True)
+        reviews = service.reviews.all()
+        serializer = ServiceReviewSerializer(reviews, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ServiceRelatedAPI(APIView):
+    """GET /api/v1/portfolio/services/{slug}/related/"""
+    permission_classes = [AllowAny]
+
+    def get(self, request, slug):
+        service = get_object_or_404(Service, slug=slug, is_active=True)
+        related = service.related_from.select_related("related_service").all()
+        serializer = ServiceRelatedSerializer(related, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class ProjectListAPI(APIView):
     permission_classes = [AllowAny]
 

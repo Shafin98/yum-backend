@@ -102,9 +102,18 @@ urlpatterns = [
     path('api/v1/portfolio/values/', ValueListView.as_view()),
     path('api/v1/portfolio/team/', TeamMemberListView.as_view()),
 
-    # Category → Service  (old /categories/ kept as alias during transition)
+    # Services — list & detail
     path('api/v1/portfolio/services/', ServiceListAPI.as_view()),
     path('api/v1/portfolio/services/<slug:slug>/', ServiceDetailAPI.as_view()),
+
+    # Services — sub-resource endpoints
+    path('api/v1/portfolio/services/<slug:slug>/process/', ServiceProcessAPI.as_view()),
+    path('api/v1/portfolio/services/<slug:slug>/gallery/', ServiceGalleryAPI.as_view()),
+    path('api/v1/portfolio/services/<slug:slug>/deliverables/', ServiceDeliverablesAPI.as_view()),
+    path('api/v1/portfolio/services/<slug:slug>/tools/', ServiceToolsAPI.as_view()),
+    path('api/v1/portfolio/services/<slug:slug>/pricingtiers/', ServicePricingTiersAPI.as_view()),
+    path('api/v1/portfolio/services/<slug:slug>/reviews/', ServiceReviewsAPI.as_view()),
+    path('api/v1/portfolio/services/<slug:slug>/related/', ServiceRelatedAPI.as_view()),
     # path('api/v1/portfolio/categories/', CategoryListAPI.as_view()),  # REMOVED — use /services/
 
 ]

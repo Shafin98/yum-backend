@@ -103,7 +103,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         fields = [
             "title",
             "slug",
-            "type",           # now a plain CharField, no source remapping needed
+            "type",
             "project_image",
             "website",
             "project_summary",
@@ -113,14 +113,8 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 
 # ==============================================================================
-# SERVICES  (replaces CategoryPublicSerializer)
+# SERVICES — Sub-resource serializers
 # ==============================================================================
-
-class ServiceBadgeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ServiceBadge
-        fields = ["badge"]
-
 
 class ServiceProcessSerializer(serializers.ModelSerializer):
     class Meta:
@@ -129,80 +123,169 @@ class ServiceProcessSerializer(serializers.ModelSerializer):
 
 
 class ServiceGallerySerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+
     class Meta:
         model = ServiceGallery
-        fields = ["type", "src", "caption", "order_no"]
+        fields = ["id", "type", "src", "caption", "order_no"]
 
 
 class ServiceDeliverableSerializer(serializers.ModelSerializer):
+    """Returns a flat string list — just the name value."""
     class Meta:
         model = ServiceDeliverable
-        fields = ["name", "order_no"]
+        fields = ["name"]
+
+    def to_representation(self, instance):
+        return instance.name
 
 
 class ServiceToolSerializer(serializers.ModelSerializer):
+    """Returns a flat string list — just the name value."""
     class Meta:
         model = ServiceTool
-        fields = ["name", "order_no"]
+        fields = ["name"]
+
+    def to_representation(self, instance):
+        return instance.name
 
 
 class ServicePricingFeatureSerializer(serializers.ModelSerializer):
+    """Returns a flat string list — just the feature value."""
     class Meta:
         model = ServicePricingFeature
-        fields = ["feature", "order_no"]
+        fields = ["feature"]
+
+    def to_representation(self, instance):
+        return instance.feature
 
 
 class ServicePricingTierSerializer(serializers.ModelSerializer):
+    """
+    Matches spec shape:
+    {
+        "id": "basic",
+        "name": "Basic",
+        "price": 1597,
+        "tagline": "Ideal for startups",
+        "features": ["Single Page", "Responsive Design"],
+        "deliveryDays": 9,
+        "revisions": 5,
+        "highlight": false
+    }
+    """
+    id = serializers.IntegerField(read_only=True)
+    deliveryDays = serializers.IntegerField(source="delivery_days")
     features = ServicePricingFeatureSerializer(many=True, read_only=True)
 
     class Meta:
         model = ServicePricingTier
         fields = [
+            "id",
             "name",
             "tagline",
             "price",
-            "delivery_days",
+            "deliveryDays",
             "revisions",
             "highlight",
-            "order_no",
             "features",
         ]
 
 
 class ServiceReviewSerializer(serializers.ModelSerializer):
+    """
+    Matches spec shape:
+    {
+        "id": 1,
+        "author": "Mark Fritsch",
+        "role": "Corporate Branding Administrator",
+        "company": "Mills - Hartmann",
+        "rating": 4,
+        "text": "The execution was excellent.",
+        "date": "Tue Jun 16 2026"
+    }
+    """
+    id = serializers.IntegerField(read_only=True)
+    author = serializers.CharField(source="client_name")
+    role = serializers.CharField(source="client_title")
+    company = serializers.CharField(source="client_company", default=None)
+    text = serializers.CharField(source="testimonial")
+    date = serializers.DateField(source="review_date", format="%a %b %d %Y", allow_null=True)
+
     class Meta:
         model = ServiceReview
         fields = [
-            "client_name",
-            "client_title",
-            "client_image",
-            "testimonial",
+            "id",
+            "author",
+            "role",
+            "company",
             "rating",
-            "review_date",
+            "text",
+            "date",
         ]
 
 
 class ServiceRelatedSerializer(serializers.ModelSerializer):
-    """Lightweight nested serializer — avoids infinite recursion."""
-    name = serializers.CharField(source="related_service.name", read_only=True)
+    """
+    Matches spec shape:
+    {
+        "slug": "branding",
+        "name": "Strategic Brand Identity",
+        "image": "https://cdn.site.com/services/branding.jpg"
+    }
+    """
     slug = serializers.CharField(source="related_service.slug", read_only=True)
-    cover = serializers.ImageField(source="related_service.cover", read_only=True)
+    name = serializers.CharField(source="related_service.name", read_only=True)
+    image = serializers.ImageField(source="related_service.cover", read_only=True)
 
     class Meta:
         model = ServiceRelated
-        fields = ["name", "slug", "cover"]
+        fields = ["slug", "name", "image"]
 
 
-# Full detail serializer — used on the service detail endpoint
+# ==============================================================================
+# SERVICES — List & Detail serializers
+# ==============================================================================
+
+class ServiceMetaSerializer(serializers.ModelSerializer):
+    """
+    Nested 'meta' object matching spec:
+    {
+        "rating": 4.92,
+        "reviewCount": 202,
+        "priceFrom": 215,
+        "deliveryDays": 8,
+        "badges": ["Popular", "Fast Delivery"]
+    }
+    """
+    reviewCount = serializers.IntegerField(source="review_count")
+    priceFrom = serializers.DecimalField(source="price_from", max_digits=10, decimal_places=2)
+    deliveryDays = serializers.IntegerField(source="delivery_days")
+    badges = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Service
+        fields = ["rating", "reviewCount", "priceFrom", "deliveryDays", "badges"]
+
+    def get_badges(self, obj):
+        return list(obj.badges.values_list("badge", flat=True))
+
+
+# Full detail serializer — base service info + meta (no sub-resources; those have dedicated endpoints)
 class ServiceDetailSerializer(serializers.ModelSerializer):
-    badges = ServiceBadgeSerializer(many=True, read_only=True)
-    process_steps = ServiceProcessSerializer(many=True, read_only=True)
-    gallery = ServiceGallerySerializer(many=True, read_only=True)
-    deliverables = ServiceDeliverableSerializer(many=True, read_only=True)
-    tools = ServiceToolSerializer(many=True, read_only=True)
-    pricing_tiers = ServicePricingTierSerializer(many=True, read_only=True)
-    reviews = ServiceReviewSerializer(many=True, read_only=True)
-    related_services = ServiceRelatedSerializer(source="related_from", many=True, read_only=True)
+    """
+    Matches spec shape for GET /api/v1/portfolio/services/{slug}/:
+    {
+        "name": "logo design",
+        "slug": "logo-design",
+        "description": "...",
+        "cover": "https://...",
+        "timeline": "3-7 weeks",
+        "pitch": "...",
+        "meta": { "rating": 4.92, "reviewCount": 202, ... }
+    }
+    """
+    meta = ServiceMetaSerializer(source="*", read_only=True)
 
     class Meta:
         model = Service
@@ -213,26 +296,14 @@ class ServiceDetailSerializer(serializers.ModelSerializer):
             "cover",
             "pitch",
             "timeline",
-            "rating",
-            "review_count",
-            "price_from",
-            "delivery_days",
             "created_at",
-            # nested
-            "badges",
-            "process_steps",
-            "gallery",
-            "deliverables",
-            "tools",
-            "pricing_tiers",
-            "reviews",
-            "related_services",
+            "meta",
         ]
 
 
-# List serializer — lightweight, no nested children
+# List serializer — lightweight card view
 class ServiceListSerializer(serializers.ModelSerializer):
-    badges = ServiceBadgeSerializer(many=True, read_only=True)
+    meta = ServiceMetaSerializer(source="*", read_only=True)
 
     class Meta:
         model = Service
@@ -241,11 +312,7 @@ class ServiceListSerializer(serializers.ModelSerializer):
             "slug",
             "description",
             "cover",
-            "rating",
-            "review_count",
-            "price_from",
-            "delivery_days",
-            "badges",
+            "meta",
         ]
 
 
@@ -265,8 +332,8 @@ class AboutUsSerializer(serializers.ModelSerializer):
             "happy_clients",
             "years_experience",
             "team_members_count",
-            "mission",   # NEW
-            "vision",    # NEW
+            "mission",
+            "vision",
         ]
 
 
@@ -281,7 +348,7 @@ class ValueSerializer(serializers.ModelSerializer):
             "title",
             "description",
             "icon",
-            "order_no",  # NEW
+            "order_no",
         ]
 
 
@@ -290,11 +357,14 @@ class ValueSerializer(serializers.ModelSerializer):
 # ==============================================================================
 
 class TeamMemberSerializer(serializers.ModelSerializer):
+    # Model field is `order`, not `order_no` — map it correctly
+    order_no = serializers.IntegerField(source="order", read_only=True)
+
     class Meta:
         model = TeamMember
         fields = [
             "name",
             "designation",
             "image",
-            "order_no",  # renamed from order
+            "order_no",
         ]
