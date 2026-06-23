@@ -108,21 +108,21 @@ WSGI_APPLICATION = 'dev.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
-#         conn_max_age=600,
-#         ssl_require='DATABASE_URL' in os.environ  # only SSL if using Postgres
-#     )
-# }
+DATABASES = {
+    'default': dj_database_url.config(
+        default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
+        conn_max_age=600,
+        ssl_require='DATABASE_URL' in os.environ  # only SSL if using Postgres
+    )
+}
 
 # Dev DB
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 # Production DB
 # DATABASES = {
