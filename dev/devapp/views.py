@@ -806,16 +806,16 @@ def view_testimonial(request):
 
 
 @login_required
-def testimonial_details(request, pk):
+def testimonial_details(request, slug):
     # slug removed from Testimonial — route by pk instead
-    testimonial = get_object_or_404(Testimonial, pk=pk)
+    testimonial = get_object_or_404(Testimonial, slug=slug)
     context = {"testimonial": testimonial}
     return render(request, "testimonial/testimonial_details.html", context)
 
 
 @login_required
-def edit_testimonial(request, pk):
-    testimonial = get_object_or_404(Testimonial, pk=pk)
+def edit_testimonial(request, slug):
+    testimonial = get_object_or_404(Testimonial, slug=slug)
 
     if request.method == "POST":
         testimonial.client_name = request.POST.get("client_name")
@@ -837,8 +837,8 @@ def edit_testimonial(request, pk):
 
 @login_required
 @require_POST
-def delete_testimonial(request, pk):
-    testimonial = get_object_or_404(Testimonial, pk=pk)
+def delete_testimonial(request, slug):
+    testimonial = get_object_or_404(Testimonial, slug=slug)
     testimonial.delete()
     messages.success(request, "Testimonial deleted successfully.")
     return redirect("testimonial")

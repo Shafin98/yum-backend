@@ -1,81 +1,137 @@
 {% extends 'base.html' %}
 
-{% block title %}Testimonial | Details{% endblock %}
+{% block title %}Testimonial | {{ testimonial.client_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .section-card {
+        background: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 20px 24px;
+        margin-bottom: 24px;
+    }
+    .section-card h4 {
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333;
+    }
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 14px;
+    }
+    .info-item label {
+        display: block;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        color: #888;
+        margin-bottom: 3px;
+    }
+    .info-item p {
+        font-size: 14px;
+        color: #222;
+        margin: 0;
+    }
+    .section-heading {
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        color: #888;
+        margin-bottom: 10px;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-    <section class="customer-list-section">
-        <div class="container">
-            <div class="content">
+<section class="customer-list-section">
+    <div class="container">
+        <div class="content">
 
-                <div class="title-box">
-                            <div class="page-title">
-                                <h3>Testimonials List</h3>
-                            </div>
-                            <div class="breadcrumbs">
-                                <ul class="breadcrumbs-list">
-                                    <li><a href="{% url 'dashboard' %}"><span><img src="/static/images/icons/Home.svg" alt="more"></span>Dashboard</a></li>
-                                    <li><a href="{% url 'testimonial' %}">Testimonials List</a></li>
-                                </ul>
-                            </div>
-                            <div class="top-button">
-                                <div class="button-box">
-                                    <a class="button primary-button" href="{% url 'add_new_testimonial' %}"><span><img src="/static/images/icons/add.svg" alt="more"></span> Add New Testimonial</a>
-                                </div>
-                            </div>
+            <div class="title-box">
+                <div class="page-title">
+                    <h3>{{ testimonial.client_name }}</h3>
                 </div>
-
-
-                <div class="main_content">
-                    <div class="view_box mt-3" style="margin-bottom:15px;">
-                        <div class="col-sm-12">
-                            <div class="view_title">
-                                <div class="purchase-request">
-                                    <div class="prInformation">
-                                        <h3>Details of {{testimonial.client_name}}'s Testimonial</h3>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="purchase-request">
-
-                                <div class="prInformation">
-                                <p>Client Name: {{testimonial.client_name}}</p>
-                                <p>Client Title: {{testimonial.client_title}}</p>
-                                <p>Company Name: {{testimonial.company_name}}</p>
-                                <p>Company Logo:</p>
-                                {% if testimonial.company_logo and testimonial.company_logo.logo %}
-                                    <img src="{{ testimonial.company_logo.logo.url }}" width="120">
-                                {% else %}
-                                    <p>No logo</p>
-                                {% endif %}
-                                <p>Client Image:</p>
-                                {% if testimonial.client_image %}
-                                    <img src="{{ testimonial.client_image.url }}" width="120">
-                                {% else %}
-                                    <p>No image</p>
-                                {% endif %}
-                                <p>Rating: {{testimonial.rating}}</p>
-                                <p>Testimonial: {{testimonial.testimonial}}</p>
-
-
-                                <p>Testimonial Creation Date: {{testimonial.created_at|date:"F d, Y"|default:"Not set"}}</p>
-
-                                </div>
-                            </div>
-
-                            <!-- Edit and Delete buttons -->
-                            <div class="prInformation" style="margin-top: 20px; border-top: 1px solid #e0e0e0; padding-top: 20px;">
-                                <a class="button primary-button" href="{% url 'edit_testimonial' testimonial.slug %}">Edit</a>
-                                <form method="POST" action="{% url 'delete_testimonial' testimonial.slug %}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this testimonial? This action cannot be undone.');">
-                                    {% csrf_token %}
-                                    <button type="submit" class="button" style="background-color: #dc3545;">Delete</button>
-                                </form>
-                            </div>
-                        </div>
+                <div class="breadcrumbs">
+                    <ul class="breadcrumbs-list">
+                        <li><a href="{% url 'dashboard' %}"><span><img src="/static/images/icons/Home.svg" alt="home"></span>Dashboard</a></li>
+                        <li><a href="{% url 'testimonial' %}">Testimonials List</a></li>
+                        <li><a href="#">{{ testimonial.client_name }}</a></li>
+                    </ul>
+                </div>
+                <div class="top-button">
+                    <div class="button-box">
+                        <a class="button primary-button" href="{% url 'add_new_testimonial' %}">
+                            <span><img src="/static/images/icons/add.svg" alt="add"></span> Add New Testimonial
+                        </a>
                     </div>
                 </div>
-           </div>
+            </div>
+
+            {% if messages %}
+            <div class="alert alert-info" role="alert" style="color:red;margin-bottom:16px;">
+                {% for message in messages %}<p>{{ message }}</p>{% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="section-card">
+                <h4>Testimonial Details</h4>
+
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>Client Name</label>
+                        <p>{{ testimonial.client_name }}</p>
+                    </div>
+                    <div class="info-item">
+                        <label>Slug</label>
+                        <p>{{ testimonial.slug }}</p>
+                    </div>
+                    <div class="info-item">
+                        <label>Client Title</label>
+                        <p>{{ testimonial.client_title|default:"—" }}</p>
+                    </div>
+                    <div class="info-item">
+                        <label>Rating</label>
+                        <p>{{ testimonial.rating }} / 5</p>
+                    </div>
+                    <div class="info-item">
+                        <label>Order</label>
+                        <p>{{ testimonial.order_no }}</p>
+                    </div>
+                    <div class="info-item">
+                        <label>Created</label>
+                        <p>{{ testimonial.created_at|date:"F d, Y" }}</p>
+                    </div>
+                </div>
+
+                {% if testimonial.client_image %}
+                <div style="margin-top:16px;">
+                    <label class="section-heading">Client Image</label>
+                    <img src="{{ testimonial.client_image.url }}" alt="Client Image" style="max-height:160px;border-radius:6px;display:block;margin-top:6px;">
+                </div>
+                {% endif %}
+
+                <div style="margin-top:16px;">
+                    <label class="section-heading">Testimonial</label>
+                    <p style="font-size:14px;color:#444;margin-top:4px;">{{ testimonial.testimonial }}</p>
+                </div>
+
+                <div style="margin-top:20px;padding-top:16px;border-top:1px solid #f0f0f0;">
+                    <a class="button primary-button" href="{% url 'edit_testimonial' testimonial.slug %}">Edit Testimonial</a>
+                    <form method="POST" action="{% url 'delete_testimonial' testimonial.slug %}" style="display:inline;"
+                          onsubmit="return confirm('Delete this testimonial? This cannot be undone.');">
+                        {% csrf_token %}
+                        <button type="submit" class="button" style="background:#dc3545;color:#fff;margin-left:8px;">Delete Testimonial</button>
+                    </form>
+                </div>
+            </div>
 
         </div>
-    </section>
-
+    </div>
+</section>
 {% endblock %}

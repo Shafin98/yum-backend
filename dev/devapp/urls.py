@@ -73,9 +73,9 @@ urlpatterns = [
     # ===========================================================================
     path('add-testimonial/', views.add_testimonial, name='add_new_testimonial'),
     path('view-client-testimonials/', views.view_testimonial, name='testimonial'),
-    path('testimonial-details/<int:pk>/', views.testimonial_details, name='testimonial_details'),
-    path('edit-testimonial/<int:pk>/', views.edit_testimonial, name='edit_testimonial'),
-    path('delete-testimonial/<int:pk>/', views.delete_testimonial, name='delete_testimonial'),
+    path('testimonial-details/<slug:slug>/', views.testimonial_details, name='testimonial_details'),
+    path('edit-testimonial/<slug:slug>/', views.edit_testimonial, name='edit_testimonial'),
+    path('delete-testimonial/<slug:slug>/', views.delete_testimonial, name='delete_testimonial'),
 
     # ===========================================================================
     # CMS — PROJECTS
