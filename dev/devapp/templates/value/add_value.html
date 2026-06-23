@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %} Add Value {% endblock %}
+{% block title %} Values | Add {% endblock %}
 
 {% block content %}
 <section class="customer-list-section">
@@ -13,10 +13,9 @@
                 </div>
                 <div class="breadcrumbs">
                     <ul class="breadcrumbs-list">
-                        <li><a href="{% url 'dashboard' %}">
-                            <span><img src="/static/images/icons/Home.svg"></span>Dashboard</a></li>
+                        <li><a href="{% url 'dashboard' %}"><span><img src="/static/images/icons/Home.svg" alt="home"></span>Dashboard</a></li>
                         <li><a href="{% url 'value_list' %}">Value List</a></li>
-                        <li><a href="{% url 'add_value' %}">Add Value</a></li>
+                        <li><a href="#">Add Value</a></li>
                     </ul>
                 </div>
             </div>
@@ -24,37 +23,43 @@
             <div class="form-area-content">
                 <div class="form-inner-content">
 
+                    {% if messages %}
+                    <div class="alert alert-info" style="color:red">
+                        {% for message in messages %}<p>{{ message }}</p>{% endfor %}
+                    </div>
+                    {% endif %}
+
                     <form method="post" class="form-horizontal">
                         {% csrf_token %}
 
-                        <!-- Title -->
                         <div class="form-group">
                             <div class="input-field">
-                                <label>Title*</label>
-                                <input type="text" name="title" required>
+                                <label for="title">Title *</label>
+                                <input type="text" name="title" id="title" required>
                             </div>
                         </div>
 
-                        <!-- Description -->
                         <div class="form-group">
                             <div class="input-field">
-                                <label>Description*</label>
-                                <textarea name="description" rows="5" required></textarea>
+                                <label for="icon">Icon <small style="color:#888">(e.g. fa fa-star)</small></label>
+                                <input type="text" name="icon" id="icon" placeholder="e.g. fa fa-star">
+                            </div>
+                            <div class="input-field">
+                                <label for="order_no">Order</label>
+                                <input type="number" name="order_no" id="order_no" value="0">
                             </div>
                         </div>
 
-                        <!-- Icon -->
                         <div class="form-group">
-                            <div class="input-field">
-                                <label>Icon (optional)</label>
-                                <input type="text" name="icon" placeholder="e.g. fa fa-user">
+                            <div class="input-field-full">
+                                <label for="description">Description *</label>
+                                <textarea name="description" id="description" rows="5" required></textarea>
                             </div>
                         </div>
 
-                        <!-- Buttons -->
                         <div class="form-group">
                             <div class="form-button">
-                                <input type="submit" class="button blue-button" value="Save">
+                                <input type="submit" class="button blue-button" value="Save Value">
                                 <a href="{% url 'value_list' %}" class="button primary-button cancle-button">Cancel</a>
                             </div>
                         </div>

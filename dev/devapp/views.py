@@ -1031,6 +1031,12 @@ def edit_accounts(request, platform):
 # ==============================================================================
 
 @login_required
+def view_about_us(request):
+    about = AboutUs.objects.first()
+    context = {"about": about}
+    return render(request, "about/view_about.html", context)
+
+@login_required
 def edit_about_us(request):
     about = AboutUs.objects.first()
 
@@ -1133,7 +1139,7 @@ def add_team_member(request):
             name=name,
             designation=designation,
             image=image,
-            order_no=order_no,
+            order=order_no,
         )
 
         messages.success(request, "Team member added successfully.")
@@ -1156,7 +1162,7 @@ def edit_team_member(request, pk):
     if request.method == "POST":
         member.name = request.POST.get("name")
         member.designation = request.POST.get("designation")
-        member.order_no = request.POST.get("order_no") or 0
+        member.order = request.POST.get("order_no") or 0
 
         if "image" in request.FILES:
             member.image = request.FILES["image"]

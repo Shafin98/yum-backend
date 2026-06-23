@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %} Edit Value {% endblock %}
+{% block title %} Values | Edit {% endblock %}
 
 {% block content %}
 <section class="customer-list-section">
@@ -13,10 +13,9 @@
                 </div>
                 <div class="breadcrumbs">
                     <ul class="breadcrumbs-list">
-                        <li><a href="{% url 'dashboard' %}">
-                            <span><img src="/static/images/icons/Home.svg"></span>Dashboard</a></li>
+                        <li><a href="{% url 'dashboard' %}"><span><img src="/static/images/icons/Home.svg" alt="home"></span>Dashboard</a></li>
                         <li><a href="{% url 'value_list' %}">Value List</a></li>
-                        <li>Edit Value</li>
+                        <li><a href="#">Edit Value</a></li>
                     </ul>
                 </div>
             </div>
@@ -24,47 +23,43 @@
             <div class="form-area-content">
                 <div class="form-inner-content">
 
-                    <form method="post" class="form-horizontal">
+                    {% if messages %}
+                    <div class="alert alert-info" style="color:red">
+                        {% for message in messages %}<p>{{ message }}</p>{% endfor %}
+                    </div>
+                    {% endif %}
 
+                    <form method="post" class="form-horizontal">
                         {% csrf_token %}
 
-                        <!-- Messages -->
-                        {% if messages %}
-                        <div class="alert alert-info" style="color:red">
-                            {% for message in messages %}
-                                <p>{{ message }}</p>
-                            {% endfor %}
-                        </div>
-                        {% endif %}
-
-                        <!-- Title -->
                         <div class="form-group">
                             <div class="input-field">
-                                <label>Title*</label>
-                                <input type="text" name="title" value="{{ value.title }}" required>
+                                <label for="title">Title *</label>
+                                <input type="text" name="title" id="title" value="{{ value.title }}" required>
                             </div>
                         </div>
 
-                        <!-- Description -->
                         <div class="form-group">
                             <div class="input-field">
-                                <label>Description*</label>
-                                <textarea name="description" rows="5" required>{{ value.description }}</textarea>
+                                <label for="icon">Icon <small style="color:#888">(e.g. fa fa-star)</small></label>
+                                <input type="text" name="icon" id="icon" value="{{ value.icon }}">
+                            </div>
+                            <div class="input-field">
+                                <label for="order_no">Order</label>
+                                <input type="number" name="order_no" id="order_no" value="{{ value.order_no }}">
                             </div>
                         </div>
 
-                        <!-- Icon -->
                         <div class="form-group">
-                            <div class="input-field">
-                                <label>Icon</label>
-                                <input type="text" name="icon" value="{{ value.icon }}">
+                            <div class="input-field-full">
+                                <label for="description">Description *</label>
+                                <textarea name="description" id="description" rows="5" required>{{ value.description }}</textarea>
                             </div>
                         </div>
 
-                        <!-- Buttons -->
                         <div class="form-group">
                             <div class="form-button">
-                                <input type="submit" class="button blue-button" value="Update">
+                                <input type="submit" class="button blue-button" value="Update Value">
                                 <a href="{% url 'value_list' %}" class="button primary-button cancle-button">Cancel</a>
                             </div>
                         </div>

@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% block title %} About Us {% endblock %}
+
+{% block extra_css %}
+<style>
+    .section-card {
+        background: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 20px 24px;
+        margin-bottom: 24px;
+    }
+    .section-card h4 {
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333;
+    }
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 14px;
+    }
+    .info-item label {
+        display: block;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        color: #888;
+        margin-bottom: 3px;
+    }
+    .info-item p {
+        font-size: 14px;
+        color: #222;
+        margin: 0;
+    }
+    .section-heading {
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        color: #888;
+        margin-bottom: 10px;
+    }
+    .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 14px;
+    }
+    .stat-box {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 16px 20px;
+        text-align: center;
+    }
+    .stat-box .stat-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: #3498db;
+        line-height: 1;
+    }
+    .stat-box .stat-label {
+        font-size: 12px;
+        color: #888;
+        margin-top: 6px;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="customer-list-section">
+    <div class="container">
+        <div class="content">
+
+            <div class="title-box">
+                <div class="page-title">
+                    <h3>About Us</h3>
+                </div>
+                <div class="breadcrumbs">
+                    <ul class="breadcrumbs-list">
+                        <li><a href="{% url 'dashboard' %}"><span><img src="/static/images/icons/Home.svg" alt="home"></span>Dashboard</a></li>
+                        <li><a href="#">About Us</a></li>
+                    </ul>
+                </div>
+                <div class="top-button">
+                    <div class="button-box">
+                        <a class="button primary-button" href="{% url 'edit_about_us' %}">
+                            <span><img src="/static/images/icons/add.svg" alt="edit"></span> Edit About Us
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            {% if about %}
+
+            <!-- ── BASIC ───────────────────────────────────── -->
+            <div class="section-card">
+                <h4>Basic</h4>
+                <div class="info-item" style="margin-bottom:14px;">
+                    <label>Heading</label>
+                    <p>{{ about.heading }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Subheading</label>
+                    <p style="white-space:pre-line;">{{ about.subheading }}</p>
+                </div>
+            </div>
+
+            <!-- ── OUR STORY ───────────────────────────────── -->
+            <div class="section-card">
+                <h4>Our Story</h4>
+                <div class="info-item" style="margin-bottom:14px;">
+                    <label>Story Title</label>
+                    <p>{{ about.story_title }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Story Description</label>
+                    <p style="white-space:pre-line;">{{ about.story_description }}</p>
+                </div>
+            </div>
+
+            <!-- ── MISSION & VISION ────────────────────────── -->
+            <div class="section-card">
+                <h4>Mission & Vision</h4>
+                <div class="info-item" style="margin-bottom:14px;">
+                    <label>Mission</label>
+                    <p style="white-space:pre-line;">{{ about.mission|default:"—" }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Vision</label>
+                    <p style="white-space:pre-line;">{{ about.vision|default:"—" }}</p>
+                </div>
+            </div>
+
+            <!-- ── COUNTERS ────────────────────────────────── -->
+            <div class="section-card">
+                <h4>Counters</h4>
+                <div class="stat-grid">
+                    <div class="stat-box">
+                        <div class="stat-value">{{ about.projects_completed }}</div>
+                        <div class="stat-label">Projects Completed</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value">{{ about.happy_clients }}</div>
+                        <div class="stat-label">Happy Clients</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value">{{ about.years_experience }}</div>
+                        <div class="stat-label">Years of Experience</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value">{{ about.team_members_count }}</div>
+                        <div class="stat-label">Team Members</div>
+                    </div>
+                </div>
+            </div>
+
+            {% else %}
+            <div class="section-card">
+                <p style="color:#aaa;font-size:14px;">No About Us content has been added yet.</p>
+                <a class="button primary-button" href="{% url 'edit_about_us' %}" style="margin-top:12px;display:inline-block;">Set Up About Us</a>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</section>
+{% endblock %}

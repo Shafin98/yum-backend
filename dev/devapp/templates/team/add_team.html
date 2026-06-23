@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %} Add Team Member {% endblock %}
+{% block title %} Team | Add Member {% endblock %}
 
 {% block content %}
 <section class="customer-list-section">
@@ -13,10 +13,9 @@
                 </div>
                 <div class="breadcrumbs">
                     <ul class="breadcrumbs-list">
-                        <li><a href="{% url 'dashboard' %}">
-                            <span><img src="/static/images/icons/Home.svg"></span>Dashboard</a></li>
+                        <li><a href="{% url 'dashboard' %}"><span><img src="/static/images/icons/Home.svg" alt="home"></span>Dashboard</a></li>
                         <li><a href="{% url 'team_list' %}">Team List</a></li>
-                        <li>Add Member</li>
+                        <li><a href="#">Add Member</a></li>
                     </ul>
                 </div>
             </div>
@@ -24,45 +23,43 @@
             <div class="form-area-content">
                 <div class="form-inner-content">
 
+                    {% if messages %}
+                    <div class="alert alert-info" style="color:red">
+                        {% for message in messages %}<p>{{ message }}</p>{% endfor %}
+                    </div>
+                    {% endif %}
+
                     <form method="post" enctype="multipart/form-data" class="form-horizontal">
                         {% csrf_token %}
 
-                        <!-- Name -->
                         <div class="form-group">
                             <div class="input-field">
-                                <label>Name*</label>
-                                <input type="text" name="name" required>
+                                <label for="name">Name *</label>
+                                <input type="text" name="name" id="name" required>
                             </div>
                         </div>
 
-                        <!-- Designation -->
                         <div class="form-group">
                             <div class="input-field">
-                                <label>Designation*</label>
-                                <input type="text" name="designation" required>
+                                <label for="designation">Designation *</label>
+                                <input type="text" name="designation" id="designation" required>
                             </div>
                         </div>
 
-                        <!-- Image -->
                         <div class="form-group">
                             <div class="input-field">
-                                <label>Image*</label>
-                                <input type="file" name="image" accept="image/*" required>
+                                <label for="image">Image *</label>
+                                <input type="file" name="image" id="image" accept="image/*" required>
+                            </div>
+                            <div class="input-field">
+                                <label for="order_no">Order</label>
+                                <input type="number" name="order_no" id="order_no" value="0">
                             </div>
                         </div>
 
-                        <!-- Order -->
-                        <div class="form-group">
-                            <div class="input-field">
-                                <label>Order</label>
-                                <input type="number" name="order" placeholder="0">
-                            </div>
-                        </div>
-
-                        <!-- Buttons -->
                         <div class="form-group">
                             <div class="form-button">
-                                <input type="submit" class="button blue-button" value="Save">
+                                <input type="submit" class="button blue-button" value="Save Member">
                                 <a href="{% url 'team_list' %}" class="button primary-button cancle-button">Cancel</a>
                             </div>
                         </div>

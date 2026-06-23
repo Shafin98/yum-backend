@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %} Value List {% endblock %}
+{% block title %} Values | List {% endblock %}
 
 {% block content %}
 <section class="customer-list-section">
@@ -9,21 +9,18 @@
 
             <div class="title-box">
                 <div class="page-title">
-                    <h3>Value List</h3>
+                    <h3>Company Values</h3>
                 </div>
                 <div class="breadcrumbs">
                     <ul class="breadcrumbs-list">
-                        <li><a href="{% url 'dashboard' %}">
-                            <span><img src="/static/images/icons/Home.svg"></span>Dashboard</a></li>
-                        <li>Value List</li>
+                        <li><a href="{% url 'dashboard' %}"><span><img src="/static/images/icons/Home.svg" alt="home"></span>Dashboard</a></li>
+                        <li><a href="#">Value List</a></li>
                     </ul>
                 </div>
-
                 <div class="top-button">
                     <div class="button-box">
                         <a class="button primary-button" href="{% url 'add_value' %}">
-                            <span><img src="/static/images/icons/add.svg"></span>
-                            Add Value
+                            <span><img src="/static/images/icons/add.svg" alt="add"></span> Add Value
                         </a>
                     </div>
                 </div>
@@ -31,45 +28,51 @@
 
             <div class="listing-box">
 
-                <!-- Messages -->
                 {% if messages %}
                 <div class="alert alert-info" style="color:red">
-                    {% for message in messages %}
-                        <p>{{ message }}</p>
-                    {% endfor %}
+                    {% for message in messages %}<p>{{ message }}</p>{% endfor %}
                 </div>
                 {% endif %}
 
                 <div class="table table-border-bottom">
                     <table>
                         <tr>
-                            <th>#</th>
-                            <th>Title</th>
-                            <th>Description</th>
-                            <th>Icon</th>
+                            <th class="text-center">#</th>
+                            <th class="text-left">Title</th>
+                            <th class="text-left">Description</th>
+                            <th class="text-left">Icon</th>
+                            <th class="text-left">Order</th>
                             <th class="text-center">Action</th>
                         </tr>
 
                         {% for value in values %}
                         <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ value.title }}</td>
-                            <td>{{ value.description|truncatewords:10 }}</td>
-                            <td>{{ value.icon }}</td>
-
+                            <td class="text-center">{{ forloop.counter }}</td>
+                            <td class="text-left">{{ value.title }}</td>
+                            <td class="text-left">{{ value.description|truncatewords:10 }}</td>
+                            <td class="text-left">{{ value.icon }}</td>
+                            <td class="text-left">{{ value.order_no }}</td>
                             <td class="text-center">
-                                <a href="{% url 'edit_value' value.id %}">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <a href="{% url 'delete_value' value.id %}" 
-                                   onclick="return confirm('Are you sure?')">
-                                    <i class="fas fa-trash"></i>
-                                </a>
+                                <span class="more">
+                                    <a href="{% url 'edit_value' value.id %}" title="Edit">
+                                        <i class="fas fa-edit font-weight500"></i>
+                                    </a>
+                                </span>
+                                <span class="more">
+                                    <form method="POST" action="{% url 'delete_value' value.id %}"
+                                          style="display:inline;"
+                                          onsubmit="return confirm('Delete {{ value.title }}? This cannot be undone.');">
+                                        {% csrf_token %}
+                                        <button type="submit" style="background:none;border:none;cursor:pointer;padding:0 4px;" title="Delete">
+                                            <i class="fas fa-trash font-weight500" style="color:#e74c3c;"></i>
+                                        </button>
+                                    </form>
+                                </span>
                             </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="5" class="text-center">No Data found.</td>
+                            <td colspan="6" class="text-center">No values found.</td>
                         </tr>
                         {% endfor %}
                     </table>
