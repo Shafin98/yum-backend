@@ -1,65 +1,608 @@
 {% extends 'base.html' %}
 
-{% block title %}Service | Details{% endblock %}
+{% block title %}Service | {{ service.name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .section-card {
+        background: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 20px 24px;
+        margin-bottom: 24px;
+    }
+    .section-card h4 {
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333;
+    }
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 14px;
+    }
+    .info-item label {
+        display: block;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        color: #888;
+        margin-bottom: 3px;
+    }
+    .info-item p {
+        font-size: 14px;
+        color: #222;
+        margin: 0;
+    }
+    .badge-pill {
+        display: inline-block;
+        background: #eef2ff;
+        color: #4361ee;
+        border-radius: 20px;
+        padding: 3px 12px;
+        font-size: 12px;
+        margin: 3px 4px 3px 0;
+    }
+    .sub-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .sub-table th { text-align: left; padding: 7px 10px; background: #f8f8f8; font-weight: 600; color: #555; border-bottom: 1px solid #e8e8e8; }
+    .sub-table td { padding: 7px 10px; border-bottom: 1px solid #f2f2f2; vertical-align: middle; }
+    .sub-table tr:last-child td { border-bottom: none; }
+    .inline-form { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-end; margin-top: 14px; padding-top: 14px; border-top: 1px dashed #e0e0e0; }
+    .inline-form input[type="text"],
+    .inline-form input[type="number"],
+    .inline-form input[type="url"],
+    .inline-form input[type="date"],
+    .inline-form select,
+    .inline-form textarea { padding: 6px 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 13px; }
+    .inline-form textarea { resize: vertical; min-height: 60px; }
+    .btn-add    { background: #3498db; color: #fff; border: none; padding: 7px 16px; border-radius: 5px; cursor: pointer; font-size: 13px; }
+    .btn-delete { background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 13px; padding: 0 6px; }
+    .btn-delete:hover { text-decoration: underline; }
+    .status-dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:5px; }
+    .status-dot.active   { background:#2ecc71; }
+    .status-dot.inactive { background:#e74c3c; }
+    .section-heading { font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:.05em; color:#888; margin-bottom:10px; }
+</style>
+{% endblock %}
 
 {% block content %}
-    <section class="customer-list-section">
-        <div class="container">
-            <div class="content">
+<section class="customer-list-section">
+    <div class="container">
+        <div class="content">
 
-                <div class="title-box">
-                            <div class="page-title">
-                                <h3>Services List</h3>
-                            </div>
-                            <div class="breadcrumbs">
-                                <ul class="breadcrumbs-list">
-                                    <li><a href="{% url 'dashboard' %}"><span><img src="/static/images/icons/Home.svg" alt="more"></span>Dashboard</a></li>
-                                    <li><a href="{% url 'service' %}">Services List</a></li>
-                                </ul>
-                            </div>
-                            <div class="top-button">
-                                <div class="button-box">
-                                    <a class="button primary-button" href="{% url 'add_new_service' %}"><span><img src="/static/images/icons/add.svg" alt="more"></span> Add New Service</a>
-                                </div>
-                            </div>
+            <!-- Title bar -->
+            <div class="title-box">
+                <div class="page-title">
+                    <h3>{{ service.name }}</h3>
                 </div>
-
-
-                <div class="main_content">
-                    <div class="view_box mt-3" style="margin-bottom:15px;">
-                        <div class="col-sm-12">
-                            <div class="view_title">
-                                <div class="purchase-request">
-                                    <div class="prInformation">
-                                        <h3>{{service.name}}'s Basic Information</h3>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="purchase-request">
-
-                                <div class="prInformation">
-                                <p>Service Name: {{service.name}}</p>
-                                <p>Service Description: {{service.description}}</p>
-
-                                <p>Service Creation Date: {{service.created_at|date:"F d, Y"|default:"Not set"}}</p>
-
-                                </div>
-                            </div>
-
-                            <!-- Edit and Delete buttons -->
-                            <div class="prInformation" style="margin-top: 20px; border-top: 1px solid #e0e0e0; padding-top: 20px;">
-                                <a class="button primary-button" href="{% url 'edit_service' service.slug %}">Edit</a>
-                                <form method="POST" action="{% url 'delete_service' service.slug %}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this service? This action cannot be undone.');">
-                                    {% csrf_token %}
-                                    <button type="submit" class="button" style="background-color: #dc3545;">Delete</button>
-                                </form>
-                            </div>
-                        </div>
+                <div class="breadcrumbs">
+                    <ul class="breadcrumbs-list">
+                        <li><a href="{% url 'dashboard' %}"><span><img src="/static/images/icons/Home.svg" alt="home"></span>Dashboard</a></li>
+                        <li><a href="{% url 'service' %}">Services List</a></li>
+                        <li><a href="#">{{ service.name }}</a></li>
+                    </ul>
+                </div>
+                <div class="top-button">
+                    <div class="button-box">
+                        <a class="button primary-button" href="{% url 'add_new_service' %}">
+                            <span><img src="/static/images/icons/add.svg" alt="add"></span> Add New Service
+                        </a>
                     </div>
                 </div>
-           </div>
+            </div>
+
+            {% if messages %}
+            <div class="alert alert-info" role="alert" style="color:red;margin-bottom:16px;">
+                {% for message in messages %}<p>{{ message }}</p>{% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- ══════════════════════════════════════════════
+                 1. BASIC INFORMATION
+            ══════════════════════════════════════════════ -->
+            <div class="section-card">
+                <h4>Basic Information</h4>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>Name</label>
+                        <p>{{ service.name }}</p>
+                    </div>
+                    <div class="info-item">
+                        <label>Slug</label>
+                        <p>{{ service.slug }}</p>
+                    </div>
+                    <div class="info-item">
+                        <label>Status</label>
+                        <p>
+                            {% if service.is_active %}
+                                <span class="status-dot active"></span> Active
+                            {% else %}
+                                <span class="status-dot inactive"></span> Inactive
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="info-item">
+                        <label>Timeline</label>
+                        <p>{{ service.timeline|default:"—" }}</p>
+                    </div>
+                    <div class="info-item">
+                        <label>Price From</label>
+                        <p>${{ service.price_from }}</p>
+                    </div>
+                    <div class="info-item">
+                        <label>Delivery Days</label>
+                        <p>{{ service.delivery_days }} days</p>
+                    </div>
+                    <div class="info-item">
+                        <label>Rating</label>
+                        <p>{{ service.rating }} / 5</p>
+                    </div>
+                    <div class="info-item">
+                        <label>Review Count</label>
+                        <p>{{ service.review_count }}</p>
+                    </div>
+                    <div class="info-item">
+                        <label>Created</label>
+                        <p>{{ service.created_at|date:"F d, Y" }}</p>
+                    </div>
+                </div>
+
+                {% if service.cover %}
+                <div style="margin-top:16px;">
+                    <label class="section-heading">Cover Image</label>
+                    <img src="{{ service.cover.url }}" alt="Cover" style="max-height:160px;border-radius:6px;display:block;margin-top:6px;">
+                </div>
+                {% endif %}
+
+                <div style="margin-top:16px;">
+                    <label class="section-heading">Description</label>
+                    <p style="font-size:14px;color:#444;margin-top:4px;">{{ service.description }}</p>
+                </div>
+                <div style="margin-top:12px;">
+                    <label class="section-heading">Pitch</label>
+                    <p style="font-size:14px;color:#444;margin-top:4px;">{{ service.pitch }}</p>
+                </div>
+
+                <div style="margin-top:20px;padding-top:16px;border-top:1px solid #f0f0f0;">
+                    <a class="button primary-button" href="{% url 'edit_service' service.slug %}">Edit Service</a>
+                    <form method="POST" action="{% url 'delete_service' service.slug %}" style="display:inline;"
+                          onsubmit="return confirm('Delete this service? This cannot be undone.');">
+                        {% csrf_token %}
+                        <button type="submit" class="button" style="background:#dc3545;color:#fff;margin-left:8px;">Delete Service</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════════════
+                 2. BADGES
+            ══════════════════════════════════════════════ -->
+            <div class="section-card">
+                <h4>Badges</h4>
+
+                {% if service.badges.all %}
+                    <div>
+                        {% for badge in service.badges.all %}
+                        <span class="badge-pill">
+                            {{ badge.badge }}
+                            <form method="POST" action="{% url 'delete_service_badge' badge.pk %}" style="display:inline;"
+                                  onsubmit="return confirm('Remove badge?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-delete" title="Remove">✕</button>
+                            </form>
+                        </span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p style="color:#aaa;font-size:13px;">No badges yet.</p>
+                {% endif %}
+
+                <form method="POST" action="{% url 'add_service_badge' service.slug %}" class="inline-form">
+                    {% csrf_token %}
+                    <input type="text" name="badge" placeholder="e.g. Popular" required style="width:200px;">
+                    <button type="submit" class="btn-add">+ Add Badge</button>
+                </form>
+            </div>
+
+            <!-- ══════════════════════════════════════════════
+                 3. PROCESS STEPS
+            ══════════════════════════════════════════════ -->
+            <div class="section-card">
+                <h4>Process Steps</h4>
+
+                {% if service.process_steps.all %}
+                <table class="sub-table">
+                    <tr>
+                        <th style="width:50px;">#</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th style="width:80px;">Action</th>
+                    </tr>
+                    {% for step in service.process_steps.all %}
+                    <tr>
+                        <td>{{ step.order_no }}</td>
+                        <td>{{ step.title }}</td>
+                        <td>{{ step.description }}</td>
+                        <td>
+                            <form method="POST" action="{% url 'delete_service_process' step.pk %}"
+                                  onsubmit="return confirm('Delete this step?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-delete">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                {% else %}
+                    <p style="color:#aaa;font-size:13px;">No process steps yet.</p>
+                {% endif %}
+
+                <form method="POST" action="{% url 'add_service_process' service.slug %}" class="inline-form">
+                    {% csrf_token %}
+                    <div style="display:flex;flex-direction:column;gap:6px;flex:1;">
+                        <input type="text" name="title" placeholder="Step title" required>
+                        <textarea name="description" placeholder="Step description" rows="2"></textarea>
+                    </div>
+                    <input type="number" name="order_no" placeholder="Order #" value="0" style="width:80px;">
+                    <button type="submit" class="btn-add">+ Add Step</button>
+                </form>
+            </div>
+
+            <!-- ══════════════════════════════════════════════
+                 4. GALLERY
+            ══════════════════════════════════════════════ -->
+            <div class="section-card">
+                <h4>Gallery</h4>
+
+                {% if service.gallery.all %}
+                <table class="sub-table">
+                    <tr>
+                        <th style="width:50px;">#</th>
+                        <th style="width:70px;">Type</th>
+                        <th>URL</th>
+                        <th>Caption</th>
+                        <th style="width:80px;">Action</th>
+                    </tr>
+                    {% for item in service.gallery.all %}
+                    <tr>
+                        <td>{{ item.order_no }}</td>
+                        <td>{{ item.type }}</td>
+                        <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                            <a href="{{ item.src }}" target="_blank" title="{{ item.src }}">{{ item.src|truncatechars:40 }}</a>
+                        </td>
+                        <td>{{ item.caption|default:"—" }}</td>
+                        <td>
+                            <form method="POST" action="{% url 'delete_service_gallery' item.pk %}"
+                                  onsubmit="return confirm('Delete this gallery item?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-delete">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                {% else %}
+                    <p style="color:#aaa;font-size:13px;">No gallery items yet.</p>
+                {% endif %}
+
+                <form method="POST" action="{% url 'add_service_gallery' service.slug %}" class="inline-form">
+                    {% csrf_token %}
+                    <select name="type">
+                        <option value="image">Image</option>
+                        <option value="video">Video</option>
+                    </select>
+                    <input type="url" name="src" placeholder="Media URL" required style="flex:1;min-width:200px;">
+                    <input type="text" name="caption" placeholder="Caption (optional)" style="width:160px;">
+                    <input type="number" name="order_no" placeholder="Order #" value="0" style="width:80px;">
+                    <button type="submit" class="btn-add">+ Add</button>
+                </form>
+            </div>
+
+            <!-- ══════════════════════════════════════════════
+                 5. DELIVERABLES
+            ══════════════════════════════════════════════ -->
+            <div class="section-card">
+                <h4>Deliverables</h4>
+
+                {% if service.deliverables.all %}
+                <table class="sub-table">
+                    <tr>
+                        <th style="width:50px;">#</th>
+                        <th>Name</th>
+                        <th style="width:80px;">Action</th>
+                    </tr>
+                    {% for item in service.deliverables.all %}
+                    <tr>
+                        <td>{{ item.order_no }}</td>
+                        <td>{{ item.name }}</td>
+                        <td>
+                            <form method="POST" action="{% url 'delete_service_deliverable' item.pk %}"
+                                  onsubmit="return confirm('Delete this deliverable?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-delete">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                {% else %}
+                    <p style="color:#aaa;font-size:13px;">No deliverables yet.</p>
+                {% endif %}
+
+                <form method="POST" action="{% url 'add_service_deliverable' service.slug %}" class="inline-form">
+                    {% csrf_token %}
+                    <input type="text" name="name" placeholder="e.g. Source files" required style="flex:1;min-width:200px;">
+                    <input type="number" name="order_no" placeholder="Order #" value="0" style="width:80px;">
+                    <button type="submit" class="btn-add">+ Add</button>
+                </form>
+            </div>
+
+            <!-- ══════════════════════════════════════════════
+                 6. TOOLS
+            ══════════════════════════════════════════════ -->
+            <div class="section-card">
+                <h4>Tools Used</h4>
+
+                {% if service.tools.all %}
+                <table class="sub-table">
+                    <tr>
+                        <th style="width:50px;">#</th>
+                        <th>Tool</th>
+                        <th style="width:80px;">Action</th>
+                    </tr>
+                    {% for item in service.tools.all %}
+                    <tr>
+                        <td>{{ item.order_no }}</td>
+                        <td>{{ item.name }}</td>
+                        <td>
+                            <form method="POST" action="{% url 'delete_service_tool' item.pk %}"
+                                  onsubmit="return confirm('Delete this tool?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-delete">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                {% else %}
+                    <p style="color:#aaa;font-size:13px;">No tools yet.</p>
+                {% endif %}
+
+                <form method="POST" action="{% url 'add_service_tool' service.slug %}" class="inline-form">
+                    {% csrf_token %}
+                    <input type="text" name="name" placeholder="e.g. Figma" required style="flex:1;min-width:200px;">
+                    <input type="number" name="order_no" placeholder="Order #" value="0" style="width:80px;">
+                    <button type="submit" class="btn-add">+ Add</button>
+                </form>
+            </div>
+
+            <!-- ══════════════════════════════════════════════
+                 7. PRICING TIERS
+            ══════════════════════════════════════════════ -->
+            <div class="section-card">
+                <h4>Pricing Tiers</h4>
+
+                {% if service.pricing_tiers.all %}
+                {% for tier in service.pricing_tiers.all %}
+                <div style="border:1px solid #e8e8e8;border-radius:6px;padding:14px;margin-bottom:12px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                        <strong>{{ tier.name }}</strong>
+                        {% if tier.highlight %}<span class="badge-pill">Highlighted</span>{% endif %}
+                        <form method="POST" action="{% url 'delete_service_pricing_tier' tier.pk %}"
+                              onsubmit="return confirm('Delete this tier?');" style="margin:0;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-delete">Delete Tier</button>
+                        </form>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item"><label>Tagline</label><p>{{ tier.tagline|default:"—" }}</p></div>
+                        <div class="info-item"><label>Price</label><p>${{ tier.price }}</p></div>
+                        <div class="info-item"><label>Delivery</label><p>{{ tier.delivery_days }} days</p></div>
+                        <div class="info-item"><label>Revisions</label><p>{{ tier.revisions }}</p></div>
+                    </div>
+                    <div style="margin-top:10px;">
+                        <label class="section-heading">Features</label>
+                        {% if tier.features.all %}
+                        <ul style="margin:6px 0 0 16px;font-size:13px;">
+                            {% for feat in tier.features.all %}
+                            <li style="margin-bottom:4px;">
+                                {{ feat.feature }}
+                                <form method="POST" action="{% url 'delete_service_pricing_feature' feat.pk %}"
+                                      onsubmit="return confirm('Delete feature?');" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-delete">✕</button>
+                                </form>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        {% else %}
+                            <p style="color:#aaa;font-size:13px;margin-top:4px;">No features yet.</p>
+                        {% endif %}
+
+                        <form method="POST" action="{% url 'add_service_pricing_feature' tier.pk %}" class="inline-form" style="padding-top:8px;">
+                            {% csrf_token %}
+                            <input type="text" name="feature" placeholder="Add a feature" required style="flex:1;min-width:200px;">
+                            <input type="number" name="order_no" placeholder="Order #" value="0" style="width:80px;">
+                            <button type="submit" class="btn-add">+ Add Feature</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                    <p style="color:#aaa;font-size:13px;">No pricing tiers yet.</p>
+                {% endif %}
+
+                <!-- Add new tier -->
+                <details style="margin-top:10px;">
+                    <summary style="cursor:pointer;font-size:13px;color:#3498db;font-weight:600;">+ Add New Pricing Tier</summary>
+                    <form method="POST" action="{% url 'add_service_pricing_tier' service.slug %}" class="inline-form" style="flex-direction:column;align-items:stretch;gap:10px;margin-top:12px;">
+                        {% csrf_token %}
+                        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                            <div style="flex:1;min-width:160px;">
+                                <label style="font-size:12px;color:#888;">Tier Name *</label>
+                                <input type="text" name="name" placeholder="e.g. Basic" required style="width:100%;">
+                            </div>
+                            <div style="flex:2;min-width:200px;">
+                                <label style="font-size:12px;color:#888;">Tagline</label>
+                                <input type="text" name="tagline" placeholder="e.g. Ideal for startups" style="width:100%;">
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                            <div style="flex:1;min-width:100px;">
+                                <label style="font-size:12px;color:#888;">Price ($) *</label>
+                                <input type="number" name="price" step="0.01" min="0" required style="width:100%;">
+                            </div>
+                            <div style="flex:1;min-width:100px;">
+                                <label style="font-size:12px;color:#888;">Delivery Days *</label>
+                                <input type="number" name="delivery_days" min="1" required style="width:100%;">
+                            </div>
+                            <div style="flex:1;min-width:100px;">
+                                <label style="font-size:12px;color:#888;">Revisions</label>
+                                <input type="text" name="revisions" placeholder="e.g. 3 or Unlimited" style="width:100%;">
+                            </div>
+                            <div style="flex:1;min-width:80px;">
+                                <label style="font-size:12px;color:#888;">Order #</label>
+                                <input type="number" name="order_no" value="0" style="width:100%;">
+                            </div>
+                        </div>
+                        <div>
+                            <label style="font-size:13px;">
+                                <input type="checkbox" name="highlight" value="on"> Mark as highlighted tier
+                            </label>
+                        </div>
+                        <div>
+                            <button type="submit" class="btn-add">Save Tier</button>
+                        </div>
+                    </form>
+                </details>
+            </div>
+
+            <!-- ══════════════════════════════════════════════
+                 8. REVIEWS
+            ══════════════════════════════════════════════ -->
+            <div class="section-card">
+                <h4>Reviews</h4>
+
+                {% if service.reviews.all %}
+                <table class="sub-table">
+                    <tr>
+                        <th>Author</th>
+                        <th>Role / Company</th>
+                        <th>Rating</th>
+                        <th>Date</th>
+                        <th style="width:80px;">Action</th>
+                    </tr>
+                    {% for review in service.reviews.all %}
+                    <tr>
+                        <td>{{ review.client_name }}</td>
+                        <td>{{ review.client_title }}{% if review.client_company %}, {{ review.client_company }}{% endif %}</td>
+                        <td>{{ review.rating }} / 5</td>
+                        <td>{{ review.review_date|date:"d M Y"|default:"—" }}</td>
+                        <td>
+                            <form method="POST" action="{% url 'delete_service_review' review.pk %}"
+                                  onsubmit="return confirm('Delete this review?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-delete">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                {% else %}
+                    <p style="color:#aaa;font-size:13px;">No reviews yet.</p>
+                {% endif %}
+
+                <details style="margin-top:14px;">
+                    <summary style="cursor:pointer;font-size:13px;color:#3498db;font-weight:600;">+ Add Review</summary>
+                    <form method="POST" action="{% url 'add_service_review' service.slug %}" class="inline-form" style="flex-direction:column;align-items:stretch;gap:10px;margin-top:12px;">
+                        {% csrf_token %}
+                        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                            <div style="flex:1;min-width:160px;">
+                                <label style="font-size:12px;color:#888;">Author Name *</label>
+                                <input type="text" name="client_name" required style="width:100%;">
+                            </div>
+                            <div style="flex:1;min-width:160px;">
+                                <label style="font-size:12px;color:#888;">Role / Title *</label>
+                                <input type="text" name="client_title" required style="width:100%;">
+                            </div>
+                            <div style="flex:1;min-width:160px;">
+                                <label style="font-size:12px;color:#888;">Company</label>
+                                <input type="text" name="client_company" style="width:100%;">
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                            <div style="flex:2;min-width:200px;">
+                                <label style="font-size:12px;color:#888;">Image URL</label>
+                                <input type="url" name="client_image" placeholder="https://..." style="width:100%;">
+                            </div>
+                            <div style="flex:1;min-width:80px;">
+                                <label style="font-size:12px;color:#888;">Rating (1–5) *</label>
+                                <input type="number" name="rating" min="1" max="5" required style="width:100%;">
+                            </div>
+                            <div style="flex:1;min-width:130px;">
+                                <label style="font-size:12px;color:#888;">Review Date</label>
+                                <input type="date" name="review_date" style="width:100%;">
+                            </div>
+                        </div>
+                        <div>
+                            <label style="font-size:12px;color:#888;">Review Text *</label>
+                            <textarea name="testimonial" rows="3" required style="width:100%;"></textarea>
+                        </div>
+                        <div>
+                            <button type="submit" class="btn-add">Save Review</button>
+                        </div>
+                    </form>
+                </details>
+            </div>
+
+            <!-- ══════════════════════════════════════════════
+                 9. RELATED SERVICES
+            ══════════════════════════════════════════════ -->
+            <div class="section-card">
+                <h4>Related Services</h4>
+
+                {% if service.related_from.all %}
+                <table class="sub-table">
+                    <tr>
+                        <th>Service</th>
+                        <th>Slug</th>
+                        <th style="width:80px;">Action</th>
+                    </tr>
+                    {% for rel in service.related_from.all %}
+                    <tr>
+                        <td>{{ rel.related_service.name }}</td>
+                        <td>{{ rel.related_service.slug }}</td>
+                        <td>
+                            <form method="POST" action="{% url 'delete_service_related' rel.pk %}"
+                                  onsubmit="return confirm('Remove this related service?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-delete">Remove</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                {% else %}
+                    <p style="color:#aaa;font-size:13px;">No related services yet.</p>
+                {% endif %}
+
+                <form method="POST" action="{% url 'add_service_related' service.slug %}" class="inline-form">
+                    {% csrf_token %}
+                    <select name="related_slug" required style="flex:1;min-width:200px;">
+                        <option value="">— Select a service —</option>
+                        {% for s in all_services %}
+                            {% if s.slug != service.slug %}
+                            <option value="{{ s.slug }}">{{ s.name }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn-add">+ Link Service</button>
+                </form>
+            </div>
 
         </div>
-    </section>
-
+    </div>
+</section>
 {% endblock %}

@@ -30,6 +30,35 @@ urlpatterns = [
     path('edit-service/<slug:slug>/', views.edit_service, name='edit_service'),
     path('delete-service/<slug:slug>/', views.delete_service, name='delete_service'),
 
+    # ── Service sub-resources (add: by service slug / delete: by record pk) ──
+    # Badges
+    path('service/<slug:slug>/badge/add/', views.add_service_badge, name='add_service_badge'),
+    path('service/badge/<int:pk>/delete/', views.delete_service_badge, name='delete_service_badge'),
+    # Process steps
+    path('service/<slug:slug>/process/add/', views.add_service_process, name='add_service_process'),
+    path('service/process/<int:pk>/delete/', views.delete_service_process, name='delete_service_process'),
+    # Gallery
+    path('service/<slug:slug>/gallery/add/', views.add_service_gallery, name='add_service_gallery'),
+    path('service/gallery/<int:pk>/delete/', views.delete_service_gallery, name='delete_service_gallery'),
+    # Deliverables
+    path('service/<slug:slug>/deliverable/add/', views.add_service_deliverable, name='add_service_deliverable'),
+    path('service/deliverable/<int:pk>/delete/', views.delete_service_deliverable, name='delete_service_deliverable'),
+    # Tools
+    path('service/<slug:slug>/tool/add/', views.add_service_tool, name='add_service_tool'),
+    path('service/tool/<int:pk>/delete/', views.delete_service_tool, name='delete_service_tool'),
+    # Pricing tiers
+    path('service/<slug:slug>/pricing-tier/add/', views.add_service_pricing_tier, name='add_service_pricing_tier'),
+    path('service/pricing-tier/<int:pk>/delete/', views.delete_service_pricing_tier, name='delete_service_pricing_tier'),
+    # Pricing features (add is by tier pk, not service slug)
+    path('service/pricing-tier/<int:pk>/feature/add/', views.add_service_pricing_feature, name='add_service_pricing_feature'),
+    path('service/pricing-feature/<int:pk>/delete/', views.delete_service_pricing_feature, name='delete_service_pricing_feature'),
+    # Reviews
+    path('service/<slug:slug>/review/add/', views.add_service_review, name='add_service_review'),
+    path('service/review/<int:pk>/delete/', views.delete_service_review, name='delete_service_review'),
+    # Related services
+    path('service/<slug:slug>/related/add/', views.add_service_related, name='add_service_related'),
+    path('service/related/<int:pk>/delete/', views.delete_service_related, name='delete_service_related'),
+
     # ===========================================================================
     # CMS — LOGOS
     # ===========================================================================

@@ -376,7 +376,10 @@ def service_list(request):
 @login_required
 def service_details(request, slug):
     service = get_object_or_404(Service, slug=slug)
-    context = {"service": service}
+    context = {
+        "service": service,
+        "all_services": Service.objects.filter(is_active=True).order_by("name"),
+    }
     return render(request, "services/service_details.html", context)
 
 
@@ -413,6 +416,278 @@ def delete_service(request, slug):
     service.delete()
     messages.success(request, "Service deleted successfully.")
     return redirect("service")
+
+
+# ==============================================================================
+# CMS — SERVICE SUB-RESOURCES  (all POST-only, redirect back to detail page)
+# ==============================================================================
+
+# ── BADGES ────────────────────────────────────────────────────────────────────
+
+@login_required
+@require_POST
+def add_service_badge(request, slug):
+    service = get_object_or_404(Service, slug=slug)
+    badge = request.POST.get("badge", "").strip()
+    if badge:
+        ServiceBadge.objects.create(service=service, badge=badge)
+        messages.success(request, "Badge added.")
+    else:
+        messages.error(request, "Badge text is required.")
+    return redirect("service_details", slug=slug)
+
+
+@login_required
+@require_POST
+def delete_service_badge(request, pk):
+    badge = get_object_or_404(ServiceBadge, pk=pk)
+    slug = badge.service.slug
+    badge.delete()
+    messages.success(request, "Badge removed.")
+    return redirect("service_details", slug=slug)
+
+
+# ── PROCESS STEPS ─────────────────────────────────────────────────────────────
+
+@login_required
+@require_POST
+def add_service_process(request, slug):
+    service = get_object_or_404(Service, slug=slug)
+    title = request.POST.get("title", "").strip()
+    description = request.POST.get("description", "").strip()
+    order_no = int(request.POST.get("order_no") or 0)
+    if title:
+        ServiceProcess.objects.create(
+            service=service, title=title, description=description, order_no=order_no
+        )
+        messages.success(request, "Process step added.")
+    else:
+        messages.error(request, "Title is required.")
+    return redirect("service_details", slug=slug)
+
+
+@login_required
+@require_POST
+def delete_service_process(request, pk):
+    step = get_object_or_404(ServiceProcess, pk=pk)
+    slug = step.service.slug
+    step.delete()
+    messages.success(request, "Process step deleted.")
+    return redirect("service_details", slug=slug)
+
+
+# ── GALLERY ───────────────────────────────────────────────────────────────────
+
+@login_required
+@require_POST
+def add_service_gallery(request, slug):
+    service = get_object_or_404(Service, slug=slug)
+    media_type = request.POST.get("type", "image")
+    src = request.POST.get("src", "").strip()
+    caption = request.POST.get("caption", "").strip() or None
+    order_no = int(request.POST.get("order_no") or 0)
+    if src:
+        ServiceGallery.objects.create(
+            service=service, type=media_type, src=src, caption=caption, order_no=order_no
+        )
+        messages.success(request, "Gallery item added.")
+    else:
+        messages.error(request, "Media URL is required.")
+    return redirect("service_details", slug=slug)
+
+
+@login_required
+@require_POST
+def delete_service_gallery(request, pk):
+    item = get_object_or_404(ServiceGallery, pk=pk)
+    slug = item.service.slug
+    item.delete()
+    messages.success(request, "Gallery item deleted.")
+    return redirect("service_details", slug=slug)
+
+
+# ── DELIVERABLES ──────────────────────────────────────────────────────────────
+
+@login_required
+@require_POST
+def add_service_deliverable(request, slug):
+    service = get_object_or_404(Service, slug=slug)
+    name = request.POST.get("name", "").strip()
+    order_no = int(request.POST.get("order_no") or 0)
+    if name:
+        ServiceDeliverable.objects.create(service=service, name=name, order_no=order_no)
+        messages.success(request, "Deliverable added.")
+    else:
+        messages.error(request, "Name is required.")
+    return redirect("service_details", slug=slug)
+
+
+@login_required
+@require_POST
+def delete_service_deliverable(request, pk):
+    item = get_object_or_404(ServiceDeliverable, pk=pk)
+    slug = item.service.slug
+    item.delete()
+    messages.success(request, "Deliverable deleted.")
+    return redirect("service_details", slug=slug)
+
+
+# ── TOOLS ─────────────────────────────────────────────────────────────────────
+
+@login_required
+@require_POST
+def add_service_tool(request, slug):
+    service = get_object_or_404(Service, slug=slug)
+    name = request.POST.get("name", "").strip()
+    order_no = int(request.POST.get("order_no") or 0)
+    if name:
+        ServiceTool.objects.create(service=service, name=name, order_no=order_no)
+        messages.success(request, "Tool added.")
+    else:
+        messages.error(request, "Name is required.")
+    return redirect("service_details", slug=slug)
+
+
+@login_required
+@require_POST
+def delete_service_tool(request, pk):
+    item = get_object_or_404(ServiceTool, pk=pk)
+    slug = item.service.slug
+    item.delete()
+    messages.success(request, "Tool deleted.")
+    return redirect("service_details", slug=slug)
+
+
+# ── PRICING TIERS ─────────────────────────────────────────────────────────────
+
+@login_required
+@require_POST
+def add_service_pricing_tier(request, slug):
+    service = get_object_or_404(Service, slug=slug)
+    name = request.POST.get("name", "").strip()
+    tagline = request.POST.get("tagline", "").strip() or None
+    price = request.POST.get("price") or 0
+    delivery_days = request.POST.get("delivery_days") or 1
+    revisions = request.POST.get("revisions", "").strip()
+    highlight = request.POST.get("highlight") == "on"
+    order_no = int(request.POST.get("order_no") or 0)
+    if name:
+        ServicePricingTier.objects.create(
+            service=service,
+            name=name,
+            tagline=tagline,
+            price=price,
+            delivery_days=delivery_days,
+            revisions=revisions,
+            highlight=highlight,
+            order_no=order_no,
+        )
+        messages.success(request, "Pricing tier added.")
+    else:
+        messages.error(request, "Tier name is required.")
+    return redirect("service_details", slug=slug)
+
+
+@login_required
+@require_POST
+def delete_service_pricing_tier(request, pk):
+    tier = get_object_or_404(ServicePricingTier, pk=pk)
+    slug = tier.service.slug
+    tier.delete()
+    messages.success(request, "Pricing tier deleted.")
+    return redirect("service_details", slug=slug)
+
+
+# ── PRICING FEATURES ──────────────────────────────────────────────────────────
+
+@login_required
+@require_POST
+def add_service_pricing_feature(request, pk):
+    tier = get_object_or_404(ServicePricingTier, pk=pk)
+    feature = request.POST.get("feature", "").strip()
+    order_no = int(request.POST.get("order_no") or 0)
+    if feature:
+        ServicePricingFeature.objects.create(pricing_tier=tier, feature=feature, order_no=order_no)
+        messages.success(request, "Feature added.")
+    else:
+        messages.error(request, "Feature text is required.")
+    return redirect("service_details", slug=tier.service.slug)
+
+
+@login_required
+@require_POST
+def delete_service_pricing_feature(request, pk):
+    feat = get_object_or_404(ServicePricingFeature, pk=pk)
+    slug = feat.pricing_tier.service.slug
+    feat.delete()
+    messages.success(request, "Feature deleted.")
+    return redirect("service_details", slug=slug)
+
+
+# ── REVIEWS ───────────────────────────────────────────────────────────────────
+
+@login_required
+@require_POST
+def add_service_review(request, slug):
+    service = get_object_or_404(Service, slug=slug)
+    client_name = request.POST.get("client_name", "").strip()
+    client_title = request.POST.get("client_title", "").strip()
+    client_company = request.POST.get("client_company", "").strip() or None
+    client_image = request.POST.get("client_image", "").strip()
+    testimonial = request.POST.get("testimonial", "").strip()
+    rating = request.POST.get("rating") or 5
+    review_date = request.POST.get("review_date") or None
+    if client_name and testimonial:
+        ServiceReview.objects.create(
+            service=service,
+            client_name=client_name,
+            client_title=client_title,
+            client_company=client_company,
+            client_image=client_image,
+            testimonial=testimonial,
+            rating=rating,
+            review_date=review_date,
+        )
+        messages.success(request, "Review added.")
+    else:
+        messages.error(request, "Author name and review text are required.")
+    return redirect("service_details", slug=slug)
+
+
+@login_required
+@require_POST
+def delete_service_review(request, pk):
+    review = get_object_or_404(ServiceReview, pk=pk)
+    slug = review.service.slug
+    review.delete()
+    messages.success(request, "Review deleted.")
+    return redirect("service_details", slug=slug)
+
+
+# ── RELATED SERVICES ──────────────────────────────────────────────────────────
+
+@login_required
+@require_POST
+def add_service_related(request, slug):
+    service = get_object_or_404(Service, slug=slug)
+    related_slug = request.POST.get("related_slug", "").strip()
+    if related_slug and related_slug != slug:
+        related_service = get_object_or_404(Service, slug=related_slug)
+        ServiceRelated.objects.get_or_create(service=service, related_service=related_service)
+        messages.success(request, "Related service linked.")
+    else:
+        messages.error(request, "Please select a valid service.")
+    return redirect("service_details", slug=slug)
+
+
+@login_required
+@require_POST
+def delete_service_related(request, pk):
+    rel = get_object_or_404(ServiceRelated, pk=pk)
+    slug = rel.service.slug
+    rel.delete()
+    messages.success(request, "Related service removed.")
+    return redirect("service_details", slug=slug)
 
 
 # ==============================================================================

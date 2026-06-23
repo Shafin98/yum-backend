@@ -1,78 +1,121 @@
-
 {% extends 'base.html' %}
 
-{% block title %} Services {% endblock %}
+{% block title %} Services | Add {% endblock %}
 
 {% block content %}
-    <section class="customer-list-section">
-        <div class="container">
-            <div class="content">
+<section class="customer-list-section">
+    <div class="container">
+        <div class="content">
 
-                <div class="title-box">
-                    <div class="page-title">
-                        <h3>Add New Service</h3>
-                    </div>
-                    <div class="breadcrumbs">
-                        <ul class="breadcrumbs-list">
-                            <li><a href="{% url 'dashboard' %}"><span><img src="/static/images/icons/Home.svg" alt="more"></span>Dashboard</a></li>
-                            <li><a href="{% url 'service' %}">Service List</a></li>
-                            <li><a href="{% url 'add_new_service' %}">Add New Service</a></li>
-                        </ul>
-                    </div>
-                    
+            <div class="title-box">
+                <div class="page-title">
+                    <h3>Add New Service</h3>
                 </div>
-
-                <div class="form-area-content">
-                    <div class="form-inner-content">
-                        
-                        <form method="post" enctype="multipart/form-data" class="form-horizontal" >
-                             <!-- Displaying messages (if any) -->
-                                {% if messages %}
-                                    <div class="alert alert-info" role="alert" style="color:red">
-                                        {% for message in messages %}
-                                            <p>{{ message }}</p>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            {% csrf_token %}
-                            <div class="form-group">
-                                <div class="input-field">
-                                    <label for="name"> Name*</label>
-                                    <input type="text" name="name" id="name" >
-                                </div>                            
-                            </div>
-                           
-                            
-                           
-                            <div class="form-group">
-                                <div class="input-field-full">
-                                    <label for="description"> Description </label>
-                                    <textarea name="description" id="description" class="form-control" rows="4"></textarea>
-                                </div>
-                            </div>
-                           
-                             
-                            
-
-                            <div class="form-group">
-                                <div class="form-button">
-                                    <input type="submit" class="button blue-button" value="Save">
-                                    <a href="{% url 'service' %}" class="button primary-button cancle-button">Cancel</a>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+                <div class="breadcrumbs">
+                    <ul class="breadcrumbs-list">
+                        <li><a href="{% url 'dashboard' %}"><span><img src="/static/images/icons/Home.svg" alt="home"></span>Dashboard</a></li>
+                        <li><a href="{% url 'service' %}">Service List</a></li>
+                        <li><a href="{% url 'add_new_service' %}">Add New Service</a></li>
+                    </ul>
                 </div>
             </div>
 
-        </div>
-    </section>
-{% endblock %}
+            <div class="form-area-content">
+                <div class="form-inner-content">
 
-{% block extra_js %}
-<script>
-$(document).ready(function() {
-    $('.select2-single').select2();
-});
-</script>
+                    {% if messages %}
+                    <div class="alert alert-info" role="alert" style="color:red">
+                        {% for message in messages %}<p>{{ message }}</p>{% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <form method="post" enctype="multipart/form-data" class="form-horizontal">
+                        {% csrf_token %}
+
+                        <!-- ── BASIC INFO ─────────────────────────────── -->
+                        <h5 class="section-heading">Basic Information</h5>
+
+                        <div class="form-group">
+                            <div class="input-field">
+                                <label for="name">Name *</label>
+                                <input type="text" name="name" id="name" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-field-full">
+                                <label for="description">Description</label>
+                                <textarea name="description" id="description" class="form-control" rows="4"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-field-full">
+                                <label for="pitch">Pitch <small style="color:#888">(short persuasive line shown on the service card)</small></label>
+                                <textarea name="pitch" id="pitch" class="form-control" rows="2"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-field">
+                                <label for="timeline">Timeline <small style="color:#888">(e.g. 3–7 weeks)</small></label>
+                                <input type="text" name="timeline" id="timeline">
+                            </div>
+                        </div>
+
+                        <!-- ── COVER IMAGE ────────────────────────────── -->
+                        <h5 class="section-heading">Cover Image</h5>
+
+                        <div class="form-group">
+                            <div class="input-field">
+                                <label for="cover">Cover Image</label>
+                                <input type="file" name="cover" id="cover" accept="image/*">
+                            </div>
+                        </div>
+
+                        <!-- ── PRICING & META ─────────────────────────── -->
+                        <h5 class="section-heading">Pricing & Meta</h5>
+
+                        <div class="form-group">
+                            <div class="input-field">
+                                <label for="price_from">Starting Price ($)</label>
+                                <input type="number" name="price_from" id="price_from" step="0.01" min="0" value="0">
+                            </div>
+                            <div class="input-field">
+                                <label for="delivery_days">Delivery Days</label>
+                                <input type="number" name="delivery_days" id="delivery_days" min="1" value="7">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-field">
+                                <label for="rating">Rating <small style="color:#888">(e.g. 4.92, max 5)</small></label>
+                                <input type="number" name="rating" id="rating" step="0.01" min="0" max="5" value="5.00">
+                            </div>
+                            <div class="input-field">
+                                <label for="review_count">Review Count</label>
+                                <input type="number" name="review_count" id="review_count" min="0" value="0">
+                            </div>
+                        </div>
+
+                        <!-- ── ACTIONS ────────────────────────────────── -->
+                        <div class="form-group">
+                            <div class="form-button">
+                                <input type="submit" class="button blue-button" value="Save Service">
+                                <a href="{% url 'service' %}" class="button primary-button cancle-button">Cancel</a>
+                            </div>
+                        </div>
+
+                    </form>
+
+                    <div style="margin-top:20px;padding:14px;background:#f8f9fa;border-radius:6px;border-left:4px solid #3498db;">
+                        <strong>Note:</strong> After saving, open the service detail page to add
+                        <em>Badges, Process Steps, Gallery, Deliverables, Tools, Pricing Tiers, Reviews</em> and <em>Related Services</em>.
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}
