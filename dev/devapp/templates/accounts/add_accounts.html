@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %} Accounts {% endblock %}
+{% block title %} Accounts | Add {% endblock %}
 
 {% block content %}
 <section class="customer-list-section">
@@ -13,7 +13,7 @@
                 </div>
                 <div class="breadcrumbs">
                     <ul class="breadcrumbs-list">
-                        <li><a href="{% url 'dashboard' %}"><span><img src="/static/images/icons/Home.svg"></span>Dashboard</a></li>
+                        <li><a href="{% url 'dashboard' %}"><span><img src="/static/images/icons/Home.svg" alt="home"></span>Dashboard</a></li>
                         <li><a href="{% url 'accounts' %}">Accounts List</a></li>
                         <li><a href="{% url 'add_new_accounts' %}">Add New Account</a></li>
                     </ul>
@@ -23,13 +23,20 @@
             <div class="form-area-content">
                 <div class="form-inner-content">
 
+                    {% if messages %}
+                    <div class="alert alert-info" role="alert" style="color:red">
+                        {% for message in messages %}<p>{{ message }}</p>{% endfor %}
+                    </div>
+                    {% endif %}
+
                     <form method="post" class="form-horizontal">
                         {% csrf_token %}
 
+                        <!-- Platform — updated choices: added Behance & Dribbble, removed TikTok -->
                         <div class="form-group">
                             <div class="input-field">
-                                <label>Platform*</label>
-                                <select name="platform" class="select2-single" required>
+                                <label for="platform">Platform *</label>
+                                <select name="platform" id="platform" class="select2-single" required>
                                     <option value="">Select Platform</option>
                                     <option value="facebook">Facebook</option>
                                     <option value="instagram">Instagram</option>
@@ -37,29 +44,39 @@
                                     <option value="linkedin">LinkedIn</option>
                                     <option value="github">GitHub</option>
                                     <option value="youtube">YouTube</option>
-                                    <option value="tiktok">TikTok</option>
+                                    <option value="behance">Behance</option>
+                                    <option value="dribbble">Dribbble</option>
                                 </select>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <div class="input-field">
-                                <label>URL*</label>
-                                <input type="url" name="url" required>
+                                <label for="url">URL *</label>
+                                <input type="url" name="url" id="url" placeholder="https://example.com" required>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <div class="input-field">
-                                <label>Icon</label>
-                                <input type="text" name="icon" placeholder="e.g. fa-facebook">
+                                <label for="icon">Icon <small style="color:#888">(e.g. fa-facebook)</small></label>
+                                <input type="text" name="icon" id="icon" placeholder="fa-facebook">
                             </div>
                         </div>
 
+                        <!-- NEW field: username -->
                         <div class="form-group">
                             <div class="input-field">
-                                <label>Order</label>
-                                <input type="number" name="order" value="0">
+                                <label for="username">Username <small style="color:#888">(optional)</small></label>
+                                <input type="text" name="username" id="username" placeholder="@yourhandle">
+                            </div>
+                        </div>
+
+                        <!-- order field renamed to order_no -->
+                        <div class="form-group">
+                            <div class="input-field">
+                                <label for="order_no">Display Order</label>
+                                <input type="number" name="order_no" id="order_no" min="0" value="0">
                             </div>
                         </div>
 
@@ -73,16 +90,24 @@
 
                         <div class="form-group">
                             <div class="form-button">
-                                <input type="submit" class="button blue-button" value="Save">
+                                <input type="submit" class="button blue-button" value="Save Account">
                                 <a href="{% url 'accounts' %}" class="button primary-button cancle-button">Cancel</a>
                             </div>
                         </div>
 
                     </form>
-
                 </div>
             </div>
+
         </div>
     </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function () {
+    $('.select2-single').select2();
+});
+</script>
 {% endblock %}
