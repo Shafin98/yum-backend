@@ -67,6 +67,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'devapp.middleware.AutoLogoutMiddleware',
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -157,6 +158,12 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+# ── Session / Auth ──────────────────────────────
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 86400
+SESSION_SAVE_EVERY_REQUEST = True
+INACTIVITY_TIMEOUT = 86400  # 1 day in seconds
 
 
 # Internationalization
