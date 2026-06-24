@@ -2,15 +2,413 @@
 
 {% block title %}Home | Dashboard{% endblock %}
 
+{% block extra_css %}
+<style>
+    .dashboard-welcome {
+        margin-bottom: 24px;
+    }
+    .dashboard-welcome h2 {
+        font-size: 22px;
+        font-weight: 700;
+        color: #222;
+        margin: 0 0 4px;
+    }
+    .dashboard-welcome p {
+        font-size: 13px;
+        color: #888;
+        margin: 0;
+    }
+
+    /* ── Stat Cards ─────────────────────────────── */
+    .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 16px;
+        margin-bottom: 28px;
+    }
+    .stat-card {
+        background: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 18px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+    .stat-card.highlight {
+        border-color: #e74c3c;
+        background: #fff8f7;
+    }
+    .stat-card .stat-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        color: #888;
+    }
+    .stat-card .stat-value {
+        font-size: 30px;
+        font-weight: 700;
+        color: #222;
+        line-height: 1;
+    }
+    .stat-card.highlight .stat-value {
+        color: #e74c3c;
+    }
+    .stat-card .stat-link {
+        font-size: 12px;
+        color: #3498db;
+        text-decoration: none;
+        margin-top: 4px;
+    }
+    .stat-card .stat-link:hover {
+        text-decoration: underline;
+    }
+
+    /* ── Two-column layout ──────────────────────── */
+    .dashboard-columns {
+        display: grid;
+        grid-template-columns: 1fr 340px;
+        gap: 24px;
+        align-items: start;
+    }
+    @media (max-width: 900px) {
+        .dashboard-columns { grid-template-columns: 1fr; }
+    }
+
+    /* ── Section Cards ──────────────────────────── */
+    .section-card {
+        background: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 20px 24px;
+        margin-bottom: 24px;
+    }
+    .section-card h4 {
+        font-size: 15px;
+        font-weight: 600;
+        margin: 0 0 16px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .section-card h4 a {
+        font-size: 12px;
+        font-weight: 400;
+        color: #3498db;
+        text-decoration: none;
+    }
+
+    /* ── Inbox table ────────────────────────────── */
+    .inbox-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+    .inbox-table th {
+        text-align: left;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        color: #888;
+        padding: 0 10px 10px 0;
+        font-weight: 600;
+    }
+    .inbox-table td {
+        padding: 10px 10px 10px 0;
+        border-top: 1px solid #f5f5f5;
+        color: #444;
+        vertical-align: middle;
+    }
+    .inbox-table tr.unread td {
+        font-weight: 600;
+        color: #222;
+    }
+    .unread-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #e74c3c;
+        margin-right: 6px;
+        flex-shrink: 0;
+    }
+    .read-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #ddd;
+        margin-right: 6px;
+        flex-shrink: 0;
+    }
+    .inbox-empty {
+        text-align: center;
+        color: #aaa;
+        font-size: 13px;
+        padding: 20px 0;
+    }
+
+    /* ── Quick Links ────────────────────────────── */
+    .quick-links {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .quick-link-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 6px;
+        background: #f8f9fa;
+        text-decoration: none;
+        color: #333;
+        font-size: 13px;
+        transition: background .15s;
+    }
+    .quick-link-item:hover {
+        background: #eef4fb;
+        color: #3498db;
+    }
+    .quick-link-item i {
+        font-size: 13px;
+        width: 16px;
+        text-align: center;
+        color: #888;
+    }
+
+    /* ── Health Warnings ────────────────────────── */
+    .health-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .health-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        line-height: 1.4;
+    }
+    .health-item.warning {
+        background: #fffbf0;
+        border: 1px solid #f0d080;
+        color: #7a5c00;
+    }
+    .health-item.error {
+        background: #fff8f7;
+        border: 1px solid #f5b8b0;
+        color: #a33;
+    }
+    .health-item.ok {
+        background: #f4fbf6;
+        border: 1px solid #b0dfc0;
+        color: #2a6e3a;
+    }
+    .health-item i {
+        margin-top: 1px;
+        flex-shrink: 0;
+    }
+    .health-all-ok {
+        font-size: 13px;
+        color: #aaa;
+        text-align: center;
+        padding: 12px 0;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
- <!-- Displaying messages (if any) -->
-    {% if messages %}
-        <div class="alert alert-info" role="alert" style="color:red">
-            {% for message in messages %}
-                <p>{{ message }}</p>
-            {% endfor %}
+
+{% if messages %}
+<div class="alert alert-info" role="alert" style="color:red;margin-bottom:20px;">
+    {% for message in messages %}<p>{{ message }}</p>{% endfor %}
+</div>
+{% endif %}
+
+<!-- Welcome -->
+<div class="dashboard-welcome">
+    <h2>Dashboard</h2>
+    <p>Welcome back. Here's an overview of your CMS content.</p>
+</div>
+
+<!-- ── Stat Cards ──────────────────────────────────────────── -->
+<div class="stat-grid">
+
+    <div class="stat-card">
+        <span class="stat-label">Services</span>
+        <span class="stat-value">{{ service_count }}</span>
+        <a class="stat-link" href="{% url 'service' %}">View all &rarr;</a>
+    </div>
+
+    <div class="stat-card">
+        <span class="stat-label">Projects</span>
+        <span class="stat-value">{{ project_count }}</span>
+        <a class="stat-link" href="{% url 'project' %}">View all &rarr;</a>
+    </div>
+
+    <div class="stat-card">
+        <span class="stat-label">Testimonials</span>
+        <span class="stat-value">{{ testimonial_count }}</span>
+        <a class="stat-link" href="{% url 'testimonial' %}">View all &rarr;</a>
+    </div>
+
+    <div class="stat-card">
+        <span class="stat-label">Client Logos</span>
+        <span class="stat-value">{{ logo_count }}</span>
+        <a class="stat-link" href="{% url 'logo' %}">View all &rarr;</a>
+    </div>
+
+    <div class="stat-card">
+        <span class="stat-label">Team Members</span>
+        <span class="stat-value">{{ team_count }}</span>
+        <a class="stat-link" href="{% url 'team_list' %}">View all &rarr;</a>
+    </div>
+
+    <div class="stat-card">
+        <span class="stat-label">Company Values</span>
+        <span class="stat-value">{{ value_count }}</span>
+        <a class="stat-link" href="{% url 'value_list' %}">View all &rarr;</a>
+    </div>
+
+    <div class="stat-card {% if unread_count %}highlight{% endif %}">
+        <span class="stat-label">Unread Messages</span>
+        <span class="stat-value">{{ unread_count }}</span>
+        <a class="stat-link" href="{% url 'contact_inbox' %}">Go to inbox &rarr;</a>
+    </div>
+
+</div>
+
+<!-- ── Two-column section ──────────────────────────────────── -->
+<div class="dashboard-columns">
+
+    <!-- Left: Recent Inbox Messages -->
+    <div>
+        <div class="section-card">
+            <h4>
+                Recent Messages
+                <a href="{% url 'contact_inbox' %}">View all &rarr;</a>
+            </h4>
+
+            {% if recent_messages %}
+            <table class="inbox-table">
+                <thead>
+                    <tr>
+                        <th>Sender</th>
+                        <th>Service</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for msg in recent_messages %}
+                    <tr class="{% if not msg.is_read %}unread{% endif %}">
+                        <td>
+                            <span class="{% if msg.is_read %}read-dot{% else %}unread-dot{% endif %}"></span>
+                            {{ msg.name }}
+                            {% if msg.company %}
+                                <span style="color:#aaa;font-weight:400;"> &middot; {{ msg.company }}</span>
+                            {% endif %}
+                        </td>
+                        <td style="color:#888;">
+                            {{ msg.service.name|default:"—" }}
+                        </td>
+                        <td style="color:#aaa;white-space:nowrap;">
+                            {{ msg.created_at|date:"d M Y" }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="inbox-empty">No messages yet.</p>
+            {% endif %}
         </div>
-    {% endif %}
-    <h2>Welcome to the Dashboard!</h2>
-    
+    </div>
+
+    <!-- Right: Quick Links + Health Warnings -->
+    <div>
+
+        <!-- Quick Links -->
+        <div class="section-card">
+            <h4>Quick Links</h4>
+            <div class="quick-links">
+                <a class="quick-link-item" href="{% url 'add_new_service' %}">
+                    <i class="fas fa-plus"></i> Add New Service
+                </a>
+                <a class="quick-link-item" href="{% url 'add_new_project' %}">
+                    <i class="fas fa-plus"></i> Add New Project
+                </a>
+                <a class="quick-link-item" href="{% url 'add_new_testimonial' %}">
+                    <i class="fas fa-plus"></i> Add New Testimonial
+                </a>
+                <a class="quick-link-item" href="{% url 'add_new_logo' %}">
+                    <i class="fas fa-plus"></i> Add New Logo
+                </a>
+                <a class="quick-link-item" href="{% url 'add_team_member' %}">
+                    <i class="fas fa-plus"></i> Add Team Member
+                </a>
+                <a class="quick-link-item" href="{% url 'view_about_us' %}">
+                    <i class="fas fa-info-circle"></i> View About Us
+                </a>
+                <a class="quick-link-item" href="{% url 'edit_about_us' %}">
+                    <i class="fas fa-pen"></i> Edit About Us
+                </a>
+                <a class="quick-link-item" href="{% url 'contact_inbox' %}">
+                    <i class="fas fa-envelope"></i> Inbox
+                    {% if unread_count %}
+                        <span style="margin-left:auto;background:#e74c3c;color:#fff;font-size:11px;padding:2px 7px;border-radius:10px;">{{ unread_count }}</span>
+                    {% endif %}
+                </a>
+            </div>
+        </div>
+
+        <!-- Content Health -->
+        <div class="section-card">
+            <h4>Content Health</h4>
+
+            {% if not about_exists or services_no_cover or services_no_pricing %}
+            <div class="health-list">
+
+                {% if not about_exists %}
+                <div class="health-item error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>About Us has not been set up yet. The <code>/api/v1/portfolio/about/</code> endpoint will return nothing.
+                        <a href="{% url 'edit_about_us' %}" style="color:inherit;text-decoration:underline;margin-left:4px;">Set it up &rarr;</a>
+                    </span>
+                </div>
+                {% endif %}
+
+                {% if services_no_cover %}
+                <div class="health-item warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>{{ services_no_cover }} service{{ services_no_cover|pluralize }} {% if services_no_cover == 1 %}has{% else %}have{% endif %} no cover image. These will show a broken image on the frontend.
+                        <a href="{% url 'service' %}" style="color:inherit;text-decoration:underline;margin-left:4px;">Review &rarr;</a>
+                    </span>
+                </div>
+                {% endif %}
+
+                {% if services_no_pricing %}
+                <div class="health-item warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>{{ services_no_pricing }} service{{ services_no_pricing|pluralize }} {% if services_no_pricing == 1 %}has{% else %}have{% endif %} no pricing tiers. The pricing section will be empty on those pages.
+                        <a href="{% url 'service' %}" style="color:inherit;text-decoration:underline;margin-left:4px;">Review &rarr;</a>
+                    </span>
+                </div>
+                {% endif %}
+
+            </div>
+            {% else %}
+            <p class="health-all-ok"><i class="fas fa-check-circle" style="color:#2ecc71;"></i> &nbsp;Everything looks good.</p>
+            {% endif %}
+
+        </div>
+
+    </div>
+</div>
+
 {% endblock %}

@@ -7,6 +7,7 @@ from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 # Basic imports
 from django.shortcuts import render, redirect
 from .models import *
+from django.db.models import Count
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -315,7 +316,27 @@ def delete_message(request, id):
 
 @login_required
 def dashboard(request):
-    return render(request, "home/home.html")
+    services_no_pricing = (
+        Service.objects
+        .annotate(tier_count=Count("pricing_tiers"))
+        .filter(tier_count=0)
+        .count()
+    )
+
+    context = {
+        "service_count":      Service.objects.filter(is_active=True).count(),
+        "project_count":      Project.objects.count(),
+        "testimonial_count":  Testimonial.objects.count(),
+        "logo_count":         Logo.objects.filter(is_active=True).count(),
+        "team_count":         TeamMember.objects.count(),
+        "value_count":        Value.objects.count(),
+        "unread_count":       PostMessage.objects.filter(is_read=False).count(),
+        "recent_messages":    PostMessage.objects.order_by("-created_at")[:5],
+        "about_exists":       AboutUs.objects.exists(),
+        "services_no_cover":  Service.objects.filter(cover="").count(),
+        "services_no_pricing": services_no_pricing,
+    }
+    return render(request, "home/home.html", context)
 
 
 # ==============================================================================
